@@ -24,7 +24,7 @@ export function SignupForm() {
         },
         {
           onSuccess: () => {
-            router.push("/dashboard");
+            router.push("/preferences");
           },
           onError: (ctx) => {
             setError(ctx.error.message ?? "Failed to create account");
