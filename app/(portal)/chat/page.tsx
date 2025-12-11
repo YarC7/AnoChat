@@ -77,10 +77,14 @@ export default function ChatPage() {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
-          <NavItem icon="chat_bubble" label="Active Chat" active />
-          <NavItem icon="people" label="Matches" badge="2" />
-          <NavItem icon="workspace_premium" label="Premium" />
-          <NavItem icon="settings" label="Settings" />
+          <NavItem icon="chat_bubble" label="Active Chat" active onClick={() => router.push("/chat")} />
+          <NavItem icon="people" label="Matches" badge="2" onClick={() => router.push("/matches")} />
+          <NavItem icon="workspace_premium" label="Premium" onClick={() => router.push("/premium")} />
+          <NavItem
+            icon="settings"
+            label="Settings"
+            onClick={() => router.push("/settings")}
+          />
         </nav>
 
         {/* User Profile */}
@@ -174,7 +178,6 @@ export default function ChatPage() {
                 message.sender === "user" ? "flex-row-reverse" : ""
               }`}
             >
-
               {/* Message Bubble */}
               <div
                 className={`max-w-md px-4 py-3 rounded-2xl ${
@@ -281,11 +284,13 @@ interface NavItemProps {
   label: string;
   active?: boolean;
   badge?: string;
+  onClick: () => void;
 }
 
-function NavItem({ icon, label, active, badge }: NavItemProps) {
+function NavItem({ icon, label, active, badge, onClick }: NavItemProps) {
   return (
     <button
+      onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
         active
           ? "bg-purple-600 text-white"
