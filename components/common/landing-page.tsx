@@ -1,13 +1,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import { EyeOff, Bot, Heart } from "lucide-react";
 
 export const LandingPage = () => {
   const router = useRouter();
   const handleStartNowClick = () => {
     router.push("/login"); // Implement email sign-in logic here
-  };
-  const handleLoginClick = () => {
-    router.push("/login");
   };
   return (
     <div className="relative flex min-h-screen w-full flex-col font-display overflow-hidden bg-[#1a1a2e]">
@@ -50,10 +48,7 @@ export const LandingPage = () => {
                 onClick={handleStartNowClick}
                 className="group relative flex w-max-content cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02] transition-all duration-300"
               >
-                <span className="text-base font-semibold">
-                  Start Now
-                </span>
-
+                <span className="text-base font-semibold">Start Now</span>
               </button>
             </div>
           </div>
@@ -61,21 +56,42 @@ export const LandingPage = () => {
 
         {/* Feature Grid */}
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1000px] px-4 w-full">
-          <FeatureCard
-            icon="visibility_off"
-            title="Total Anonymity"
-            desc="Your identity is safe with us. We don't store logs or personal data. Chat freely."
-          />
-          <FeatureCard
-            icon="smart_toy"
-            title="AI Icebreakers"
-            desc="Stuck on what to say? Our AI suggests conversation starters based on context."
-          />
-          <FeatureCard
-            icon="favorite"
-            title="Smart Matching"
-            desc="Filter by gender or interests to find the people you actually want to talk to."
-          />
+          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
+            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+              <EyeOff />
+            </div>
+            <h3 className="text-white font-bold text-lg mb-3">
+              Total Anonymity
+            </h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Your identity is safe with us. We don&apos;t store logs or personal
+              data. Chat freely.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
+            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+              <Bot />
+            </div>
+            <h3 className="text-white font-bold text-lg mb-3">
+              AI Icebreakers
+            </h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Stuck on what to say? Our AI suggests conversation starters based
+              on context.
+            </p>
+          </div>
+          <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
+            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+              <Heart />
+            </div>
+            <h3 className="text-white font-bold text-lg mb-3">
+              Smart Matching
+            </h3>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Filter by gender or interests to find the people you actually want
+              to talk to.
+            </p>
+          </div>
         </div>
       </main>
 
@@ -92,20 +108,6 @@ export const LandingPage = () => {
     </div>
   );
 };
-
-const FeatureCard: React.FC<{ icon: string; title: string; desc: string }> = ({
-  icon,
-  title,
-  desc,
-}) => (
-  <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
-    <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
-      <span className="material-symbols-outlined text-[36px]">{icon}</span>
-    </div>
-    <h3 className="text-white font-bold text-lg mb-3">{title}</h3>
-    <p className="text-gray-400 text-sm leading-relaxed">{desc}</p>
-  </div>
-);
 
 const FooterLink: React.FC<{ href: string; children: React.ReactNode }> = ({
   href,

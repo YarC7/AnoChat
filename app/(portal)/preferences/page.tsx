@@ -1,7 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Settings,
+  User,
+  UserCheck,
+  Rainbow,
+  Sparkles,
+  ArrowRight,
+  Lock,
+} from "lucide-react";
 
 type GenderPreference = "male" | "female" | "non-binary" | "surprise";
 
@@ -23,8 +32,6 @@ export default function PreferencesPage() {
 
   return (
     <div className="min-h-screen bg-[#1a1a2e] flex flex-col">
-
-
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
@@ -33,9 +40,7 @@ export default function PreferencesPage() {
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <div className="w-12 h-12 rounded-xl bg-purple-600/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-purple-400 text-2xl">
-                  tune
-                </span>
+                <Settings className="text-purple-400 text-2xl" />
               </div>
             </div>
 
@@ -52,25 +57,25 @@ export default function PreferencesPage() {
             {/* Gender Selection Grid */}
             <div className="grid grid-cols-2 gap-3 mb-6">
               <GenderButton
-                icon="male"
+                icon={<User />}
                 label="Male"
                 selected={selectedGender === "male"}
                 onClick={() => setSelectedGender("male")}
               />
               <GenderButton
-                icon="female"
+                icon={<UserCheck />}
                 label="Female"
                 selected={selectedGender === "female"}
                 onClick={() => setSelectedGender("female")}
               />
               <GenderButton
-                icon="transgender"
+                icon={<Rainbow />}
                 label="Non-binary"
                 selected={selectedGender === "non-binary"}
                 onClick={() => setSelectedGender("non-binary")}
               />
               <GenderButton
-                icon="auto_awesome"
+                icon={<Sparkles />}
                 label="Surprise Me"
                 selected={selectedGender === "surprise"}
                 onClick={() => setSelectedGender("surprise")}
@@ -81,9 +86,7 @@ export default function PreferencesPage() {
             <div className="bg-[#252540] rounded-2xl p-4 mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-white text-xl">
-                    auto_awesome
-                  </span>
+                  <Sparkles className="text-white text-xl" />
                 </div>
                 <div>
                   <h3 className="text-white font-semibold text-sm">
@@ -114,12 +117,12 @@ export default function PreferencesPage() {
               className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mb-4"
             >
               <span>Find a Match</span>
-              <span className="material-symbols-outlined">arrow_forward</span>
+              <ArrowRight />
             </button>
 
             {/* Privacy Notice */}
             <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-              <span className="material-symbols-outlined text-sm">lock</span>
+              <Lock className="text-sm" />
               <span>Chats are end-to-end encrypted & anonymous</span>
             </div>
           </div>
@@ -140,7 +143,7 @@ export default function PreferencesPage() {
 }
 
 interface GenderButtonProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   selected: boolean;
   onClick: () => void;
@@ -157,13 +160,13 @@ function GenderButton({ icon, label, selected, onClick }: GenderButtonProps) {
       }`}
     >
       <div className="flex flex-col items-center gap-2">
-        <span
-          className={`material-symbols-outlined text-3xl ${
+        <div
+          className={`text-3xl ${
             selected ? "text-purple-400" : "text-gray-400"
           }`}
         >
           {icon}
-        </span>
+        </div>
         <span
           className={`text-sm font-medium ${
             selected ? "text-white" : "text-gray-400"

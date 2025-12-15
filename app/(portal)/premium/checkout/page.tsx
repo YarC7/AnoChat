@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/stripe/checkout-form";
+import { MessageCircle, Settings, Sparkles, Ban } from "lucide-react";
 
 // Initialize Stripe
 const stripePromise = loadStripe(
@@ -50,9 +51,7 @@ export default function CheckoutPage() {
       <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="material-symbols-outlined text-white text-lg">
-              chat
-            </span>
+            <MessageCircle className="text-white text-lg" />
           </div>
           <span className="text-white font-bold text-lg">Anonymous Chat</span>
         </div>
@@ -89,19 +88,19 @@ export default function CheckoutPage() {
 
               <div className="space-y-4">
                 <FeatureItem
-                  icon="tune"
+                  icon={<Settings />}
                   iconColor="text-purple-400"
                   title="Unlimited Gender Filtering"
                   description="Control who you connect with."
                 />
                 <FeatureItem
-                  icon="auto_awesome"
+                  icon={<Sparkles />}
                   iconColor="text-blue-400"
                   title="50 AI Icebreakers / Day"
                   description="Never run out of things to say."
                 />
                 <FeatureItem
-                  icon="block"
+                  icon={<Ban />}
                   iconColor="text-pink-400"
                   title="Ad-Free Experience"
                   description="Chat without interruptions."
@@ -190,7 +189,7 @@ export default function CheckoutPage() {
 }
 
 interface FeatureItemProps {
-  icon: string;
+  icon: React.ReactNode;
   iconColor: string;
   title: string;
   description: string;
@@ -205,9 +204,7 @@ function FeatureItem({
   return (
     <div className="flex items-start gap-3">
       <div className="flex-shrink-0">
-        <span className={`material-symbols-outlined ${iconColor} text-xl`}>
-          {icon}
-        </span>
+        <div className={`${iconColor} text-xl`}>{icon}</div>
       </div>
       <div>
         <h3 className="text-white font-semibold text-sm mb-0.5">{title}</h3>

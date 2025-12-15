@@ -1,7 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  MessageCircle,
+  Users,
+  Crown,
+  Settings,
+  User,
+  VolumeX,
+  Flag,
+  SkipForward,
+  Sparkles,
+  Smile,
+  PlusCircle,
+  Send,
+} from "lucide-react";
 
 interface Message {
   id: number;
@@ -67,9 +81,7 @@ export default function ChatPage() {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-xl">
-                chat
-              </span>
+              <MessageCircle className="text-white text-xl" />
             </div>
             <span className="text-white font-bold text-lg">StrangerChat</span>
           </div>
@@ -77,11 +89,25 @@ export default function ChatPage() {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
-          <NavItem icon="chat_bubble" label="Active Chat" active onClick={() => router.push("/chat")} />
-          <NavItem icon="people" label="Matches" badge="2" onClick={() => router.push("/matches")} />
-          <NavItem icon="workspace_premium" label="Premium" onClick={() => router.push("/premium")} />
           <NavItem
-            icon="settings"
+            icon={<MessageCircle />}
+            label="Active Chat"
+            active
+            onClick={() => router.push("/chat")}
+          />
+          <NavItem
+            icon={<Users />}
+            label="Matches"
+            badge="2"
+            onClick={() => router.push("/matches")}
+          />
+          <NavItem
+            icon={<Crown />}
+            label="Premium"
+            onClick={() => router.push("/premium")}
+          />
+          <NavItem
+            icon={<Settings />}
             label="Settings"
             onClick={() => router.push("/settings")}
           />
@@ -113,9 +139,7 @@ export default function ChatPage() {
         <header className="bg-[#16162a] border-b border-white/10 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-[#2a2a44] flex items-center justify-center">
-              <span className="material-symbols-outlined text-gray-400">
-                person
-              </span>
+              <User className="text-gray-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -133,23 +157,17 @@ export default function ChatPage() {
 
           <div className="flex items-center gap-3">
             <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                volume_off
-              </span>
+              <VolumeX className="text-gray-400" />
             </button>
             <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                flag
-              </span>
+              <Flag className="text-gray-400" />
             </button>
             <button
               onClick={handleNextStranger}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
             >
               <span>Next Stranger</span>
-              <span className="material-symbols-outlined text-lg">
-                skip_next
-              </span>
+              <SkipForward className="text-lg" />
             </button>
           </div>
         </header>
@@ -196,9 +214,7 @@ export default function ChatPage() {
             <div className="flex gap-3">
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 rounded-full bg-[#2a2a44] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-gray-400 text-sm">
-                    person
-                  </span>
+                  <User className="text-gray-400 text-sm" />
                 </div>
               </div>
               <div className="bg-[#2a2a44] px-5 py-3 rounded-2xl">
@@ -214,16 +230,14 @@ export default function ChatPage() {
           {/* AI Conversation Starters */}
           <div className="pt-4">
             <div className="flex items-center gap-2 mb-3">
-              <span className="material-symbols-outlined text-purple-400 text-sm">
-                auto_awesome
-              </span>
+              <Sparkles className="text-purple-400 text-sm" />
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
                 AI Conversation Starters
               </h3>
             </div>
             <div className="flex flex-wrap gap-2">
               <StarterButton
-                icon="sentiment_very_satisfied"
+                icon={<Smile />}
                 text="Tell me a dad joke"
                 onClick={() => handleAiStarter("Tell me a dad joke")}
               />
@@ -249,9 +263,7 @@ export default function ChatPage() {
         <div className="bg-[#16162a] border-t border-white/10 px-6 py-2">
           <div className="flex items-center gap-3">
             <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                add_circle
-              </span>
+              <PlusCircle className="text-gray-400" />
             </button>
             <input
               type="text"
@@ -262,15 +274,13 @@ export default function ChatPage() {
               className="flex-1 bg-[#2a2a44] text-white placeholder-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                mood
-              </span>
+              <Smile className="text-gray-400" />
             </button>
             <button
               onClick={handleSendMessage}
               className="p-3 bg-purple-600 hover:bg-purple-700 rounded-xl transition-colors"
             >
-              <span className="material-symbols-outlined text-white">send</span>
+              <Send className="text-white" />
             </button>
           </div>
         </div>
@@ -280,7 +290,7 @@ export default function ChatPage() {
 }
 
 interface NavItemProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   active?: boolean;
   badge?: string;
@@ -297,7 +307,7 @@ function NavItem({ icon, label, active, badge, onClick }: NavItemProps) {
           : "text-gray-400 hover:bg-white/5 hover:text-white"
       }`}
     >
-      <span className="material-symbols-outlined text-xl">{icon}</span>
+      <div className="text-xl">{icon}</div>
       <span className="font-medium text-sm flex-1 text-left">{label}</span>
       {badge && (
         <span className="bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
@@ -309,7 +319,7 @@ function NavItem({ icon, label, active, badge, onClick }: NavItemProps) {
 }
 
 interface StarterButtonProps {
-  icon?: string;
+  icon?: React.ReactNode;
   text: string;
   onClick: () => void;
 }
@@ -320,9 +330,7 @@ function StarterButton({ icon, text, onClick }: StarterButtonProps) {
       onClick={onClick}
       className="bg-[#2a2a44] hover:bg-[#323252] text-white text-sm px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
     >
-      {icon && (
-        <span className="material-symbols-outlined text-base">{icon}</span>
-      )}
+      {icon && <div className="text-base">{icon}</div>}
       <span>{text}</span>
     </button>
   );

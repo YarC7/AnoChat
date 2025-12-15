@@ -1,7 +1,9 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { CheckCircle, Check } from "lucide-react";
 
 export default function SuccessPage() {
   const router = useRouter();
@@ -21,9 +23,7 @@ export default function SuccessPage() {
         <div className="bg-[#1e1e32] rounded-3xl border border-white/10 p-8">
           {/* Success Icon */}
           <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="material-symbols-outlined text-green-500 text-5xl">
-              check_circle
-            </span>
+            <CheckCircle className="text-green-500 text-5xl" />
           </div>
 
           {/* Title */}
@@ -44,21 +44,15 @@ export default function SuccessPage() {
             </h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-purple-400 text-lg">
-                  check
-                </span>
+                <Check className="text-purple-400 text-lg" />
                 Unlimited Gender Filtering
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-purple-400 text-lg">
-                  check
-                </span>
+                <Check className="text-purple-400 text-lg" />
                 50 AI Icebreakers / Day
               </li>
               <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-purple-400 text-lg">
-                  check
-                </span>
+                <Check className="text-purple-400 text-lg" />
                 Ad-Free Experience
               </li>
             </ul>

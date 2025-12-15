@@ -1,7 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Sparkles,
+  MessageCircle,
+  Image,
+  Info,
+  BadgeCheck,
+  Palette,
+  Lock,
+  Shield,
+  Users,
+  Link,
+  LayoutDashboard,
+  BarChart,
+  Brain,
+  ArrowLeft,
+} from "lucide-react";
 
 type PlanType = "personal" | "business";
 
@@ -20,11 +36,17 @@ export default function PremiumPage() {
   return (
     <div className="min-h-screen bg-[#1a1a2e] flex flex-col items-center justify-center px-4 py-12">
       {/* Header */}
-      <div className="w-full max-w-6xl mb-8">
+      <div className="w-full max-w-6xl mb-8 relative">
+        <button
+          onClick={handleCancel}
+          className="absolute top-0 left-0 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Cancel
+        </button>
         <h1 className="text-white text-3xl font-bold text-center mb-8">
           Nâng cấp gói của bạn
         </h1>
-
       </div>
 
       {/* Pricing Cards */}
@@ -51,16 +73,16 @@ export default function PremiumPage() {
 
           <div className="space-y-3">
             <FeatureItem
-              icon="auto_awesome"
+              icon={<Sparkles />}
               text="Nhận lời giải thích đơn giản"
             />
             <FeatureItem
-              icon="chat"
+              icon={<MessageCircle />}
               text="Thực hiện các đoạn nội dung dễ giải đáp những câu hỏi thường gặp"
             />
-            <FeatureItem icon="image" text="Thử tính năng tạo hình ảnh" />
+            <FeatureItem icon={<Image />} text="Thử tính năng tạo hình ảnh" />
             <FeatureItem
-              icon="info"
+              icon={<Info />}
               text="Tiết kiệm bộ nhớ và ngữ cảnh hạn chế"
             />
           </div>
@@ -96,37 +118,43 @@ export default function PremiumPage() {
 
           <div className="space-y-3">
             <FeatureItem
-              icon="verified"
+              icon={<BadgeCheck />}
               text="Tiền hành phần tích chuyên nghiệp"
             />
-            <FeatureItem icon="chat" text="Nhận tin không giới hạn với GPT-5" />
             <FeatureItem
-              icon="palette"
+              icon={<MessageCircle />}
+              text="Nhận tin không giới hạn với GPT-5"
+            />
+            <FeatureItem
+              icon={<Palette />}
               text="Tạo hình ảnh, video, slide và nhiều nội dung khác"
             />
             <FeatureItem
-              icon="lock"
+              icon={<Lock />}
               text="Bảo mật không gian của bạn bằng SSO, MFA và nhiều tính năng khác"
             />
             <FeatureItem
-              icon="shield"
+              icon={<Shield />}
               text="Bảo vệ quyền riêng tư tuyệt đối không sử dụng dữ liệu cho huấn luyện"
             />
-            <FeatureItem icon="forum" text="Chia sẻ dữ án và GPT tùy chỉnh" />
             <FeatureItem
-              icon="link"
+              icon={<Users />}
+              text="Chia sẻ dữ án và GPT tùy chỉnh"
+            />
+            <FeatureItem
+              icon={<Link />}
               text="Tích hợp với SharePoint và các công cụ khác"
             />
             <FeatureItem
-              icon="dashboard"
+              icon={<LayoutDashboard />}
               text="Đơn giản hóa quy trình thanh toán và quản lý người dùng"
             />
             <FeatureItem
-              icon="bar_chart"
+              icon={<BarChart />}
               text="Ghi lại chi chú cuộc họp bằng tính năng chép lời"
             />
             <FeatureItem
-              icon="psychology"
+              icon={<Brain />}
               text="Triển khai các tác nhân để viết mã và nghiên cứu"
             />
           </div>
@@ -152,16 +180,14 @@ export default function PremiumPage() {
 }
 
 interface FeatureItemProps {
-  icon: string;
+  icon: React.ReactNode;
   text: string;
 }
 
 function FeatureItem({ icon, text }: FeatureItemProps) {
   return (
     <div className="flex items-start gap-3">
-      <span className="material-symbols-outlined text-gray-400 text-xl flex-shrink-0 mt-0.5">
-        {icon}
-      </span>
+      <div className="text-gray-400 text-xl flex-shrink-0 mt-0.5">{icon}</div>
       <p className="text-gray-300 text-sm leading-relaxed">{text}</p>
     </div>
   );

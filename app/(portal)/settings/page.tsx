@@ -1,7 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  MessageCircle,
+  User,
+  Shield,
+  Bell,
+  Sparkles,
+  Headphones,
+  BellRing,
+  LogOut,
+  Lock,
+  Mail,
+  Search,
+  Info,
+  EyeOff,
+  Save,
+  ArrowLeft,
+} from "lucide-react";
 
 type SettingsTab = "account" | "privacy" | "notifications" | "ai" | "support";
 
@@ -55,9 +72,7 @@ export default function SettingsPage() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-xl">
-                chat
-              </span>
+              <MessageCircle className="text-white text-xl" />
             </div>
             <span className="text-white font-bold text-lg">AnonChat</span>
           </div>
@@ -67,31 +82,31 @@ export default function SettingsPage() {
 
         <nav className="space-y-1">
           <SettingsNavItem
-            icon="person"
+            icon={<User />}
             label="Account"
             active={activeTab === "account"}
             onClick={() => setActiveTab("account")}
           />
           <SettingsNavItem
-            icon="shield"
+            icon={<Shield />}
             label="Privacy & Matching"
             active={activeTab === "privacy"}
             onClick={() => setActiveTab("privacy")}
           />
           <SettingsNavItem
-            icon="notifications"
+            icon={<Bell />}
             label="Notifications"
             active={activeTab === "notifications"}
             onClick={() => setActiveTab("notifications")}
           />
           <SettingsNavItem
-            icon="auto_awesome"
+            icon={<Sparkles />}
             label="AI Features"
             active={activeTab === "ai"}
             onClick={() => setActiveTab("ai")}
           />
           <SettingsNavItem
-            icon="support_agent"
+            icon={<Headphones />}
             label="Support"
             active={activeTab === "support"}
             onClick={() => setActiveTab("support")}
@@ -103,19 +118,24 @@ export default function SettingsPage() {
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto p-8">
           {/* Header Actions */}
-          <div className="flex items-center justify-end gap-3 mb-8">
-            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                notifications
-              </span>
+          <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
+            >
+              <ArrowLeft className="text-lg" />
+              <span className="text-sm font-medium">Back</span>
             </button>
-            <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-              <span className="material-symbols-outlined text-gray-400">
-                logout
-              </span>
-            </button>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">U</span>
+            <div className="flex items-center gap-3">
+              <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                <BellRing className="text-gray-400" />
+              </button>
+              <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                <LogOut className="text-gray-400" />
+              </button>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">U</span>
+              </div>
             </div>
           </div>
 
@@ -134,9 +154,7 @@ export default function SettingsPage() {
               {/* Change Password */}
               <div className="bg-[#1e1e32] rounded-2xl border border-white/10 p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="material-symbols-outlined text-white">
-                    lock
-                  </span>
+                  <Lock className="text-white" />
                   <h3 className="text-white font-semibold">Change Password</h3>
                 </div>
 
@@ -191,9 +209,7 @@ export default function SettingsPage() {
               {/* Recovery Email */}
               <div className="bg-[#1e1e32] rounded-2xl border border-white/10 p-6">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="material-symbols-outlined text-white">
-                    mail
-                  </span>
+                  <Mail className="text-white" />
                   <h3 className="text-white font-semibold">Recovery Email</h3>
                 </div>
                 <p className="text-gray-400 text-sm mb-4">
@@ -321,9 +337,7 @@ export default function SettingsPage() {
                     <option value="city">My City</option>
                   </select>
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl">
-                      search
-                    </span>
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xl" />
                     <input
                       type="text"
                       placeholder="City or District..."
@@ -337,7 +351,7 @@ export default function SettingsPage() {
               <SettingCard
                 title="Show Approximate Location"
                 description="Display your city/country to match with locals."
-                icon="info"
+                icon={<Info />}
               >
                 <Toggle enabled={showLocation} onChange={setShowLocation} />
               </SettingCard>
@@ -359,7 +373,7 @@ export default function SettingsPage() {
 
               {/* Smart Icebreakers */}
               <SettingCard
-                icon="auto_awesome"
+                icon={<Sparkles />}
                 iconBg="bg-purple-600"
                 title="Smart Icebreakers"
                 description="Suggest conversation starters based on context."
@@ -372,7 +386,7 @@ export default function SettingsPage() {
 
               {/* Sensitive Content Filter */}
               <SettingCard
-                icon="visibility_off"
+                icon={<EyeOff />}
                 iconBg="bg-purple-600"
                 title="Sensitive Content Filter"
                 description="Blur images that might contain sensitive material."
@@ -423,7 +437,7 @@ export default function SettingsPage() {
                 onClick={handleSaveChanges}
                 className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
               >
-                <span className="material-symbols-outlined">save</span>
+                <Save />
                 <span>Save All Changes</span>
               </button>
             </div>
@@ -435,7 +449,7 @@ export default function SettingsPage() {
 }
 
 interface SettingsNavItemProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   active: boolean;
   onClick: () => void;
@@ -456,7 +470,7 @@ function SettingsNavItem({
           : "text-gray-400 hover:bg-white/5 hover:text-white"
       }`}
     >
-      <span className="material-symbols-outlined text-xl">{icon}</span>
+      <div className="text-xl">{icon}</div>
       <span className="font-medium text-sm">{label}</span>
     </button>
   );
@@ -465,7 +479,7 @@ function SettingsNavItem({
 interface SettingCardProps {
   title: string;
   description: string;
-  icon?: string;
+  icon?: React.ReactNode;
   iconBg?: string;
   children: React.ReactNode;
 }
@@ -488,13 +502,13 @@ function SettingCard({
                   iconBg || "bg-purple-600/20"
                 } rounded-lg flex items-center justify-center`}
               >
-                <span
-                  className={`material-symbols-outlined text-xl ${
+                <div
+                  className={`text-xl ${
                     iconBg ? "text-white" : "text-purple-400"
                   }`}
                 >
                   {icon}
-                </span>
+                </div>
               </div>
             )}
             <h3 className="text-white font-semibold">{title}</h3>
