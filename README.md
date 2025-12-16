@@ -41,6 +41,34 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 This project uses Stripe Checkout for payments. To automatically grant users Premium access after a successful Checkout, we rely on a secure server-side webhook that listens for `checkout.session.completed` and sets `user.isPremium = true` in the database.
 
+---
+
+## Docker & CI/CD 🐳⚙️
+
+You can run the app and its services locally with Docker Compose (Postgres + Redis + Adminer). A production Dockerfile is included for building optimized images, and there is a simple GitHub Actions workflow for CI.
+
+Quick start (local):
+
+1. Copy or create a `.env` file at the project root with the required variables (e.g., `DATABASE_URL`, `REDIS_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
+
+2. Build and start services:
+
+```bash
+docker compose up --build
+```
+
+3. The app will be available at `http://localhost:3000`, Adminer at `http://localhost:8080` (DB: `postgres` / `postgres`, DB name `playground`).
+
+Notes:
+
+- The Docker image runs `npx drizzle-kit push` on start to apply DB migrations (make sure your `DATABASE_URL` is reachable from the container).
+- The `docker-compose.yml` defines Postgres, Redis and Adminer. Adjust env vars in `.env` as needed.
+
+CI (GitHub Actions)
+
+- A basic workflow is included at `.github/workflows/ci.yml` to install deps, run lint, build, run tests and build a Docker image (but it does not push images by default).
+- To enable pushing images, add credentials and extend `docker/build-push-action` options in the workflow.
+
 Environment variables required:
 
 - `STRIPE_SECRET_KEY` — your Stripe API secret key
