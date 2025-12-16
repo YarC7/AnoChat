@@ -48,135 +48,140 @@ export default function PremiumPage() {
         <h1 className="text-white text-3xl font-bold text-center mb-8">
           <LocaleText k="premiumHeader" />
         </h1>
-        <div className="bg-[#1e1e32] rounded-3xl border border-white/10 p-8">
-          <h2 className="text-white text-2xl font-bold mb-6">
-            <LocaleText k="plan_free" />
-          </h2>
 
-          <div className="mb-6">
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-white text-5xl font-bold">₫0</span>
-              <span className="text-gray-400">VNĐ / tháng</span>
-            </div>
-            <p className="text-gray-400 text-sm">
-              <LocaleText k="freeSubtitle" />
-            </p>
-          </div>
+        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-[#1e1e32] rounded-3xl border border-white/10 p-8">
+            <h2 className="text-white text-2xl font-bold mb-6">
+              <LocaleText k="plan_free" />
+            </h2>
 
-          {currentPlan === "free" && (
             <div className="mb-6">
-              <div className="bg-[#252540] text-white text-center py-3 rounded-lg font-medium">
-                <LocaleText k="currentPlanLabel" />
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-white text-5xl font-bold">0</span>
+                <span className="text-gray-400">VNĐ / tháng</span>
               </div>
+              <p className="text-gray-400 text-sm">
+                <LocaleText k="freeSubtitle" />
+              </p>
             </div>
-          )}
 
-          <div className="space-y-3">
-            <FeatureItem
-              icon={<Sparkles />}
-              text={<LocaleText k="feature_simple_explanations" />}
-            />
-            <FeatureItem
-              icon={<MessageCircle />}
-              text={<LocaleText k="feature_handle_queries" />}
-            />
-            <FeatureItem
-              icon={<Image />}
-              text={<LocaleText k="feature_image_generation" />}
-            />
-            <FeatureItem
-              icon={<Info />}
-              text={<LocaleText k="feature_memory" />}
-            />
-          </div>
-        </div>
+            {currentPlan === "free" && (
+              <div className="mb-6">
+                <div className="bg-[#252540] text-white text-center py-3 rounded-lg font-medium">
+                  <LocaleText k="currentPlanLabel" />
+                </div>
+              </div>
+            )}
 
-        {/* Business Plan */}
-        <div className="bg-gradient-to-br from-[#2d2d52] to-[#1e1e32] rounded-3xl border border-purple-500/30 p-8 relative">
-          {/* Recommended Badge */}
-          <div className="absolute -top-3 right-8">
-            <span className="bg-purple-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
-              <LocaleText k="recommended" />
-            </span>
-          </div>
-
-          <h2 className="text-white text-2xl font-bold mb-6">
-            <LocaleText k="plan_business" />
-          </h2>
-
-          <div className="mb-6">
-            <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-white text-5xl font-bold">₫649.000</span>
-              <span className="text-gray-400">VNĐ / tháng (theo phần VAT)</span>
+            <div className="space-y-3">
+              <FeatureItem
+                icon={<Sparkles />}
+                text={<LocaleText k="feature_simple_explanations" />}
+              />
+              <FeatureItem
+                icon={<MessageCircle />}
+                text={<LocaleText k="feature_handle_queries" />}
+              />
+              <FeatureItem
+                icon={<Image />}
+                text={<LocaleText k="feature_image_generation" />}
+              />
+              <FeatureItem
+                icon={<Info />}
+                text={<LocaleText k="feature_memory" />}
+              />
             </div>
-            <p className="text-gray-300 text-sm">
-              <LocaleText k="businessSubtitle" />
-            </p>
           </div>
 
-          <button
-            onClick={handleUpgrade}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl transition-colors mb-6"
-          >
-            <LocaleText k="upgradeToBusiness" />
-          </button>
+          {/* Business Plan */}
+          <div className="bg-gradient-to-br from-[#2d2d52] to-[#1e1e32] rounded-3xl border border-purple-500/30 p-8 relative">
+            {/* Recommended Badge */}
+            <div className="absolute -top-3 right-8">
+              <span className="bg-purple-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
+                <LocaleText k="recommended" />
+              </span>
+            </div>
 
-          <div className="space-y-3">
-            <FeatureItem
-              icon={<BadgeCheck />}
-              text={<LocaleText k="biz_feature_analytics" />}
-            />
-            <FeatureItem
-              icon={<MessageCircle />}
-              text={<LocaleText k="biz_feature_unlimited_messages" />}
-            />
-            <FeatureItem
-              icon={<Palette />}
-              text={<LocaleText k="biz_feature_media" />}
-            />
-            <FeatureItem
-              icon={<Lock />}
-              text={<LocaleText k="biz_feature_security" />}
-            />
-            <FeatureItem
-              icon={<Shield />}
-              text={<LocaleText k="biz_feature_privacy" />}
-            />
-            <FeatureItem
-              icon={<Users />}
-              text={<LocaleText k="biz_feature_sharing" />}
-            />
-            <FeatureItem
-              icon={<Link />}
-              text={<LocaleText k="biz_feature_integrations" />}
-            />
-            <FeatureItem
-              icon={<LayoutDashboard />}
-              text={<LocaleText k="biz_feature_workflows" />}
-            />
-            <FeatureItem
-              icon={<BarChart />}
-              text={<LocaleText k="biz_feature_transcription" />}
-            />
-            <FeatureItem
-              icon={<Brain />}
-              text={<LocaleText k="biz_feature_agents" />}
-            />
-          </div>
+            <h2 className="text-white text-2xl font-bold mb-6">
+              <LocaleText k="plan_business" />
+            </h2>
 
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-xs text-gray-400">
-              <LocaleText k="biz_footer_users" />
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              <LocaleText k="biz_footer_note" />{" "}
-              <a
-                href="#"
-                className="text-purple-400 hover:text-purple-300 underline"
-              >
-                <LocaleText k="learnMore" />
-              </a>
-            </p>
+            <div className="mb-6">
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-white text-5xl font-bold">199.000</span>
+                <span className="text-gray-400">
+                  VNĐ / tháng (theo phần VAT)
+                </span>
+              </div>
+              <p className="text-gray-300 text-sm">
+                <LocaleText k="businessSubtitle" />
+              </p>
+            </div>
+
+            <button
+              onClick={handleUpgrade}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl transition-colors mb-6"
+            >
+              <LocaleText k="upgradeToBusiness" />
+            </button>
+
+            <div className="space-y-3">
+              <FeatureItem
+                icon={<BadgeCheck />}
+                text={<LocaleText k="biz_feature_analytics" />}
+              />
+              <FeatureItem
+                icon={<MessageCircle />}
+                text={<LocaleText k="biz_feature_unlimited_messages" />}
+              />
+              <FeatureItem
+                icon={<Palette />}
+                text={<LocaleText k="biz_feature_media" />}
+              />
+              <FeatureItem
+                icon={<Lock />}
+                text={<LocaleText k="biz_feature_security" />}
+              />
+              <FeatureItem
+                icon={<Shield />}
+                text={<LocaleText k="biz_feature_privacy" />}
+              />
+              <FeatureItem
+                icon={<Users />}
+                text={<LocaleText k="biz_feature_sharing" />}
+              />
+              <FeatureItem
+                icon={<Link />}
+                text={<LocaleText k="biz_feature_integrations" />}
+              />
+              <FeatureItem
+                icon={<LayoutDashboard />}
+                text={<LocaleText k="biz_feature_workflows" />}
+              />
+              <FeatureItem
+                icon={<BarChart />}
+                text={<LocaleText k="biz_feature_transcription" />}
+              />
+              <FeatureItem
+                icon={<Brain />}
+                text={<LocaleText k="biz_feature_agents" />}
+              />
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-white/10">
+              <p className="text-xs text-gray-400">
+                <LocaleText k="biz_footer_users" />
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                <LocaleText k="biz_footer_note" />{" "}
+                <a
+                  href="#"
+                  className="text-purple-400 hover:text-purple-300 underline"
+                >
+                  <LocaleText k="learnMore" />
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
