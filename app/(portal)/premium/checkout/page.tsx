@@ -50,7 +50,7 @@ export default function CheckoutPage() {
       {/* Header */}
       <header className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-linear-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
             <MessageCircle className="text-white text-lg" />
           </div>
           <span className="text-white font-bold text-lg">Anonymous Chat</span>
@@ -122,7 +122,7 @@ export default function CheckoutPage() {
                 more genuine connections.&quot;
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">A</span>
                 </div>
                 <span className="text-gray-400 text-sm font-medium">
@@ -203,7 +203,7 @@ function FeatureItem({
 }: FeatureItemProps) {
   return (
     <div className="flex items-start gap-3">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <div className={`${iconColor} text-xl`}>{icon}</div>
       </div>
       <div>

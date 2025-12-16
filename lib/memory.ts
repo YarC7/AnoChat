@@ -1,14 +1,22 @@
 import { db } from "@/db";
 import { userMemory } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
+import { eq, and } from "drizzle-orm";
+import { randomUUID } from "crypto";
 
 export async function getMemory(userId: string, namespace = "default") {
   const rows = await db
-    .select()
+    .select({
+      id: userMemory.id,
+      key: userMemory.key,
+      value: userMemory.value,
+      createdAt: userMemory.createdAt,
+      updatedAt: userMemory.updatedAt,
+    })
     .from(userMemory)
-    .where(eq(userMemory.userId, userId))
-    .where(eq(userMemory.namespace, namespace));
+    .where(
+      and(eq(userMemory.userId, userId), eq(userMemory.namespace, namespace))
+    );
+
   return rows.map((r) => ({
     id: r.id,
     key: r.key,
@@ -24,11 +32,21 @@ export async function getMemoryKey(
   namespace = "default"
 ) {
   const rows = await db
-    .select()
+    .select({
+      id: userMemory.id,
+      key: userMemory.key,
+      value: userMemory.value,
+      createdAt: userMemory.createdAt,
+      updatedAt: userMemory.updatedAt,
+    })
     .from(userMemory)
-    .where(eq(userMemory.userId, userId))
-    .where(eq(userMemory.namespace, namespace))
-    .where(eq(userMemory.key, key))
+    .where(
+      and(
+        eq(userMemory.userId, userId),
+        eq(userMemory.namespace, namespace),
+        eq(userMemory.key, key)
+      )
+    )
     .limit(1);
   return rows[0] || null;
 }
@@ -36,7 +54,7 @@ export async function getMemoryKey(
 export async function setMemoryKey(
   userId: string,
   key: string,
-  value: any,
+  value: unknown,
   namespace = "default"
 ) {
   if (!key || key.length > 256)
@@ -45,7 +63,7 @@ export async function setMemoryKey(
   let serialized: string;
   try {
     serialized = JSON.stringify(value);
-  } catch (err) {
+  } catch {
     throw new Error("Value must be JSON serializable");
   }
 
@@ -54,12 +72,17 @@ export async function setMemoryKey(
   }
 
   const existing = await db
-    .select()
+    .select({ id: userMemory.id })
     .from(userMemory)
-    .where(eq(userMemory.userId, userId))
-    .where(eq(userMemory.namespace, namespace))
-    .where(eq(userMemory.key, key))
+    .where(
+      and(
+        eq(userMemory.userId, userId),
+        eq(userMemory.namespace, namespace),
+        eq(userMemory.key, key)
+      )
+    )
     .limit(1);
+
   if (existing[0]) {
     await db
       .update(userMemory)
@@ -67,7 +90,7 @@ export async function setMemoryKey(
       .where(eq(userMemory.id, existing[0].id));
     return { id: existing[0].id, key, value };
   }
-  const id = uuidv4();
+  const id = randomUUID();
   await db
     .insert(userMemory)
     .values({ id, userId, namespace, key, value: serialized });
@@ -81,8 +104,12 @@ export async function deleteMemoryKey(
 ) {
   await db
     .delete(userMemory)
-    .where(eq(userMemory.userId, userId))
-    .where(eq(userMemory.key, key))
-    .where(eq(userMemory.namespace, namespace));
+    .where(
+      and(
+        eq(userMemory.userId, userId),
+        eq(userMemory.key, key),
+        eq(userMemory.namespace, namespace)
+      )
+    );
   return { success: true };
 }

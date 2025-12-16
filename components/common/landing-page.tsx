@@ -32,7 +32,7 @@ export const LandingPage = () => {
           <div className="space-y-6">
             <h1 className="tracking-tight text-5xl md:text-7xl font-black leading-[1.1] text-white">
               <LocaleText k="heroTitleLine1" /> <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-purple-500 to-indigo-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 via-purple-500 to-indigo-500">
                 <LocaleText k="heroTitleLine2" />
               </span>
             </h1>
@@ -46,7 +46,7 @@ export const LandingPage = () => {
             <div className="flex flex-col gap-4">
               <button
                 onClick={handleStartNowClick}
-                className="group relative flex w-max-content cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02] transition-all duration-300"
+                className="group relative flex w-max-content cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 bg-linear-to-r from-purple-600 to-indigo-600 text-white shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02] transition-all duration-300"
               >
                 <span className="text-base font-semibold">
                   <LocaleText k="startNow" />
@@ -59,7 +59,7 @@ export const LandingPage = () => {
         {/* Feature Grid */}
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1000px] px-4 w-full">
           <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
-            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+            <div className="h-16 w-16 rounded-xl bg-linear-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
               <EyeOff />
             </div>
             <h3 className="text-white font-bold text-lg mb-3">
@@ -70,7 +70,7 @@ export const LandingPage = () => {
             </p>
           </div>
           <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
-            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+            <div className="h-16 w-16 rounded-xl bg-linear-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
               <Bot />
             </div>
             <h3 className="text-white font-bold text-lg mb-3">
@@ -81,7 +81,7 @@ export const LandingPage = () => {
             </p>
           </div>
           <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-[#242438]/40 backdrop-blur-sm border border-white/10 hover:border-purple-500/30 hover:bg-[#242438]/60 transition-all duration-300 group">
-            <div className="h-16 w-16 rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
+            <div className="h-16 w-16 rounded-xl bg-linear-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center mb-6 text-purple-400 group-hover:scale-110 transition-transform duration-300">
               <Heart />
             </div>
             <h3 className="text-white font-bold text-lg mb-3">

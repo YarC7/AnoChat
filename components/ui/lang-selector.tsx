@@ -10,6 +10,7 @@ export function LangSelector() {
     <div className="absolute top-4 right-4">
       <select
         value={language}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(e) => setLanguage(e.target.value as any)}
         className="bg-[#16162a] text-white rounded-md px-2 py-1 border border-white/10"
         aria-label={t("language")}

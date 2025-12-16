@@ -3,13 +3,12 @@
 import { useState } from "react";
 
 export function InstallPrompt() {
-  const [isIOS] = useState(
-    () =>
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      typeof window !== "undefined" &&
-      /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-      !(window as any).MSStream
-  );
+  const [isIOS] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const hasMSStream =
+      (window as unknown as { MSStream?: unknown }).MSStream !== undefined;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !hasMSStream;
+  });
   const [isStandalone] = useState(
     () =>
       typeof window !== "undefined" &&

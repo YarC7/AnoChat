@@ -182,8 +182,8 @@ export function MatchingLobby({ userId }: { userId: string }) {
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1a2e] px-4">
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
-        <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 mb-4 shadow-lg shadow-purple-500/20">
+        <div className="text-center space-y-3 mt-2">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 mb-4 shadow-lg shadow-purple-500/20">
             <svg
               className="w-10 h-10 text-white"
               fill="none"
@@ -198,7 +198,7 @@ export function MatchingLobby({ userId }: { userId: string }) {
               />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
             Anonymous Chat
           </h2>
           <p className="text-gray-400 text-lg">
@@ -223,7 +223,7 @@ export function MatchingLobby({ userId }: { userId: string }) {
           <div className="space-y-6 animate-in fade-in duration-500">
             {/* Queue Status Card */}
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#16162a] shadow-xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-indigo-500/10" />
+              <div className="absolute inset-0 bg-linear-to-br from-purple-500/10 to-indigo-500/10" />
 
               <div className="relative p-8 space-y-6">
                 <div className="flex items-center justify-between gap-2">
@@ -278,9 +278,9 @@ export function MatchingLobby({ userId }: { userId: string }) {
                   <div className="flex flex-col items-center gap-3">
                     {/* Main Queue Number */}
                     <div className="relative">
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 blur-2xl opacity-30 animate-pulse" />
-                      <div className="relative px-8 py-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30">
-                        <span className="text-6xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                      <div className="absolute inset-0 bg-linear-to-r from-purple-600 to-indigo-600 blur-2xl opacity-30 animate-pulse" />
+                      <div className="relative px-8 py-4 rounded-2xl bg-linear-to-br from-purple-500/20 to-indigo-500/20 border border-purple-500/30">
+                        <span className="text-6xl font-bold bg-linear-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
                           {queueCount}
                         </span>
                       </div>
@@ -341,7 +341,7 @@ export function MatchingLobby({ userId }: { userId: string }) {
               onClick={startMatching}
               size="lg"
               disabled={!isConnected}
-              className="w-full h-14 text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-14 text-lg bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isConnected ? (
                 <span className="flex items-center gap-2">

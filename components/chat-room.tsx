@@ -510,7 +510,7 @@ export function ChatRoom({
         {sidebarVisible && (
           <div className="p-4 ">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-12 h-12 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
                 {currentUserId.slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
@@ -527,7 +527,7 @@ export function ChatRoom({
         {/* Chat Header */}
         <div className="bg-[#16162a] border-b border-white/10 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
               <Users className="w-6 h-6 text-white" />
             </div>
             <div>

@@ -141,7 +141,7 @@ export default function PremiumPage() {
           </div>
 
           {/* Business Plan */}
-          <div className="bg-gradient-to-br from-[#2d2d52] to-[#1e1e32] rounded-3xl border border-purple-500/30 p-8 relative">
+          <div className="bg-linear-to-br from-[#2d2d52] to-[#1e1e32] rounded-3xl border border-purple-500/30 p-8 relative">
             {/* Recommended Badge */}
             <div className="absolute -top-3 right-8">
               <span className="bg-purple-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full">

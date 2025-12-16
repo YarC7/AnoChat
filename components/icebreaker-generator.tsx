@@ -157,7 +157,7 @@ export function IcebreakerGenerator() {
                 key={index}
                 className="flex items-start gap-3 p-3 bg-background rounded-md"
               >
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
+                <span className="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium">
                   {index + 1}
                 </span>
                 <p className="flex-1">{icebreaker}</p>

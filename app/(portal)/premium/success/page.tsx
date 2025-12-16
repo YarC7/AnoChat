@@ -4,6 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { CheckCircle, Check } from "lucide-react";
+import { LocaleText } from "@/components/ui/locale-text";
 
 export default function SuccessPage() {
   const router = useRouter();

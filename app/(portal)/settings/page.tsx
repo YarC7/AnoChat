@@ -78,7 +78,7 @@ export default function SettingsPage() {
       <aside className="w-64 bg-[#16162a] border-r border-white/10 p-6">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <MessageCircle className="text-white text-xl" />
             </div>
             <span className="text-white font-bold text-lg">
@@ -148,7 +148,7 @@ export default function SettingsPage() {
               <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">
                 <LogOut className="text-gray-400" />
               </button>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-orange-400 to-pink-400 flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">U</span>
               </div>
             </div>
