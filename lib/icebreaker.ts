@@ -146,27 +146,23 @@ function getStyleContext(styles: string[]): string {
 export async function generateContextualIcebreakers(
   conversationHistory: string[],
   user1Prefs?: UserPreferences,
-  user2Prefs?: UserPreferences
+  user2Prefs?: UserPreferences,
+  language: string = "en-US"
 ): Promise<string[]> {
-  const recentMessages = conversationHistory.slice(-10).join("\n");
-  const cacheKey = `contextual:${Buffer.from(recentMessages)
-    .toString("base64")
-    .slice(0, 50)}`;
-
-  // Check cache
-  const cached = await redis.get(cacheKey);
-  if (cached) {
-    return JSON.parse(cached);
-  }
+  // Note: We don't cache here because we want fresh icebreakers each time
+  // Users expect different suggestions when they click the button again
 
   let icebreakers: string[] = [];
 
   // 1. Try Qwen (via Groq) - only if API key is valid (starts with gsk_)
   if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.startsWith("gsk_")) {
     try {
-      icebreakers = await generateContextualWithQwen(conversationHistory);
+      icebreakers = await generateContextualWithQwen(
+        conversationHistory,
+        language
+      );
       if (icebreakers.length >= 3) {
-        await redis.setex(cacheKey, 300, JSON.stringify(icebreakers));
+        // Don't cache - users expect different suggestions each time
         return icebreakers;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -179,16 +175,22 @@ export async function generateContextualIcebreakers(
 
   // 2. Final fallback
   console.warn("Qwen API unavailable, using mock");
-  return generateMockIcebreakers();
+  return generateMockIcebreakers(language);
 }
 
 /**
  * Generate contextual icebreakers using Qwen
  */
 async function generateContextualWithQwen(
-  conversationHistory: string[]
+  conversationHistory: string[],
+  language: string = "en-US"
 ): Promise<string[]> {
   const recentMessages = conversationHistory.slice(-10).join("\n");
+
+  const languageInstruction =
+    language === "vi-VN"
+      ? "Generate questions in Vietnamese (Tiếng Việt). Use natural, conversational Vietnamese."
+      : "Generate questions in English.";
 
   const systemPrompt =
     "You are a conversation facilitator. Analyze the conversation below and suggest 3 engaging follow-up questions that:\n" +
@@ -196,6 +198,8 @@ async function generateContextualWithQwen(
     "2. Deepen the conversation naturally\n" +
     "3. Are open-ended and interesting\n" +
     "4. Match the tone and style of the existing chat\n\n" +
+    languageInstruction +
+    "\n\n" +
     "Keep questions friendly, positive, and appropriate.\n\n" +
     "IMPORTANT: Output ONLY the 3 questions, nothing else. No explanations, no commentary, no thinking process.";
 
@@ -205,9 +209,6 @@ async function generateContextualWithQwen(
     "1. [First question]\n" +
     "2. [Second question]\n" +
     "3. [Third question]\n\n" +
-    "Do not include any other text. ONLY output the 3 numbered questions.";
-
-  "3. [Third question]\n\n" +
     "Do not include any other text. ONLY output the 3 numbered questions.";
 
   const result = await groq.chat.completions.create({
@@ -231,8 +232,26 @@ async function generateContextualWithQwen(
 /**
  * Mock icebreakers as fallback
  */
-function generateMockIcebreakers(): string[] {
-  const icebreakers = [
+function generateMockIcebreakers(language: string = "en-US"): string[] {
+  const icebreakersVi = [
+    "Điều thú vị nhất xảy ra với bạn tuần này là gì?",
+    "Nếu bạn có thể đi du lịch bất cứ đâu ngay bây giờ, bạn sẽ chọn đâu?",
+    "Bạn thích làm gì vào cuối tuần?",
+    "Bạn thích mèo hay chó hơn? (Hoặc cả hai đều không!)",
+    "Bộ phim hoặc chương trình nào khiến bạn cười gần đây nhất?",
+    "Nếu bạn có siêu năng lực, bạn muốn có năng lực gì?",
+    "Món ăn yêu thích của bạn là gì?",
+    "Bạn là người thích thức sớm hay thức khuya?",
+    "Bạn giỏi nhất về điều gì?",
+    "Bạn có thể gợi ý một cuốn sách hoặc podcast không?",
+    "Nếu bạn có thể ăn tối với bất kỳ ai (còn sống hoặc đã mất), đó sẽ là ai?",
+    "Tài năng ẩn của bạn là gì?",
+    "Lời khuyên tốt nhất bạn từng nhận được là gì?",
+    "Nếu bạn có thể học bất kỳ kỹ năng nào ngay lập tức, đó sẽ là gì?",
+    "Kỷ niệm tuổi thơ yêu thích của bạn là gì?",
+  ];
+
+  const icebreakersEn = [
     "What is the most interesting thing that happened to you this week?",
     "If you could travel anywhere right now, where would you go?",
     "What is your favorite way to spend a weekend?",
@@ -249,6 +268,8 @@ function generateMockIcebreakers(): string[] {
     "If you could learn any skill instantly, what would it be?",
     "What is your favorite childhood memory?",
   ];
+
+  const icebreakers = language === "vi-VN" ? icebreakersVi : icebreakersEn;
 
   // Return 3 random icebreakers
   const shuffled = [...icebreakers].sort(() => 0.5 - Math.random());

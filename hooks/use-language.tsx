@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 type Language = "vi-VN" | "en-US";
 
@@ -144,12 +138,39 @@ const translations = {
     nextStranger: "Người tiếp theo",
 
     // Chat
-    aiIcebreakers: "Gợi ý AI",
     starter_dad_joke: "Kể cho tôi một câu chuyện " + "(dad joke)",
     starter_would_you_rather: "Bạn muốn gì hơn...?",
     starter_best_travel: "Kể về chuyến đi đáng nhớ nhất",
     starter_movie_recommendation: "Gợi ý phim",
     placeholder_type_message: "Nhập tin nhắn...",
+    stranger: "Người lạ",
+    connected: "Kết nối",
+    disconnected: "Ngắt kết nối",
+    report_user: "Báo cáo",
+    next_stranger: "Người tiếp theo →",
+    today: "HÔM NAY",
+    chatting_with_stranger: "Bạn đang trò chuyện với một người lạ. Chào họ! 👋",
+    no_messages: "Chưa có tin nhắn. Bắt đầu cuộc trò chuyện!",
+    ai_suggestions: "Gợi ý AI",
+    voice_message: "🎤 Tin nhắn giọng nói",
+    recording: "Ghi âm...",
+    send: "Gửi →",
+    chats_anonymous: "Các cuộc trò chuyện ẩn danh và được mã hóa.",
+    community_guidelines: "Nguyên tắc cộng đồng",
+    report_title: "Báo cáo người dùng",
+    report_description:
+      "Vui lòng cho chúng tôi biết tại sao bạn báo cáo Người lạ #{stranger}. Báo cáo của bạn sẽ được đội ngũ xem xét.",
+    describe_issue: "Mô tả vấn đề...",
+    submit_report: "Gửi báo cáo",
+    submitting: "Đang gửi...",
+    report_success:
+      "Báo cáo đã được gửi. Cảm ơn bạn đã giúp giữ cộng đồng an toàn.",
+    report_failed: "Không thể gửi báo cáo. Vui lòng thử lại.",
+    mic_permission_error:
+      "Không thể truy cập microphone. Vui lòng kiểm tra quyền.",
+    upload_voice_failed: "Không thể gửi tin nhắn giọng nói. Vui lòng thử lại.",
+    hide_sidebar: "Ẩn thanh bên",
+    show_sidebar: "Hiện thanh bên",
 
     // Dashboard & Profile
     dashboardTitle: "Dashboard",
@@ -288,12 +309,40 @@ const translations = {
     nextStranger: "Next Stranger",
 
     // Chat
-    aiIcebreakers: "AI Conversation Starters",
     starter_dad_joke: "Tell me a dad joke",
     starter_would_you_rather: "Would you rather...?",
     starter_best_travel: "Best travel story",
     starter_movie_recommendation: "Movie recommendation",
     placeholder_type_message: "Type a message...",
+    stranger: "Stranger",
+    connected: "Connected",
+    disconnected: "Disconnected",
+    report_user: "Report",
+    next_stranger: "Next Stranger →",
+    today: "TODAY",
+    chatting_with_stranger:
+      "You are now chatting with a random stranger. Say hi! 👋",
+    no_messages: "No messages yet. Start the conversation!",
+    ai_suggestions: "Get AI suggestions",
+    voice_message: "🎤 Voice message",
+    recording: "Recording...",
+    send: "Send →",
+    chats_anonymous: "Chats are anonymous and encrypted.",
+    community_guidelines: "Community Guidelines",
+    report_title: "Report User",
+    report_description:
+      "Please tell us why you're reporting Stranger #{stranger}. Your report will be reviewed by our team.",
+    describe_issue: "Describe the issue...",
+    submit_report: "Submit Report",
+    submitting: "Submitting...",
+    report_success:
+      "Report submitted. Thank you for keeping our community safe.",
+    report_failed: "Failed to submit report. Please try again.",
+    mic_permission_error:
+      "Could not access microphone. Please check permissions.",
+    upload_voice_failed: "Failed to send voice message. Please try again.",
+    hide_sidebar: "Hide sidebar",
+    show_sidebar: "Show sidebar",
 
     // Dashboard & Profile
     dashboardTitle: "Dashboard",
@@ -309,18 +358,19 @@ const translations = {
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("vi-VN");
-
-  useEffect(() => {
+  const [language, setLanguageState] = useState<Language>(() => {
     // Load language from localStorage on mount
-    const savedLanguage = localStorage.getItem("app-language") as Language;
-    if (
-      savedLanguage &&
-      (savedLanguage === "vi-VN" || savedLanguage === "en-US")
-    ) {
-      setLanguageState(savedLanguage);
+    if (typeof window !== "undefined") {
+      const savedLanguage = localStorage.getItem("app-language") as Language;
+      if (
+        savedLanguage &&
+        (savedLanguage === "vi-VN" || savedLanguage === "en-US")
+      ) {
+        return savedLanguage;
+      }
     }
-  }, []);
+    return "vi-VN";
+  });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -328,7 +378,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (key: string, vars?: Record<string, string | number>): string => {
-    let template =
+    const template =
       translations[language][
         key as keyof (typeof translations)[typeof language]
       ] || key;
@@ -345,7 +395,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           return String(val);
         }
       }
-      if (val instanceof Date) {
+      // Check if value is a Date object
+      if (
+        typeof val === "object" &&
+        val !== null &&
+        "getTime" in val &&
+        typeof (val as Record<string, unknown>).getTime === "function"
+      ) {
         try {
           return new Intl.DateTimeFormat(language).format(val as Date);
         } catch {

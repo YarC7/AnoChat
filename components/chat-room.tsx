@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWebSocket } from "@/hooks/use-websocket";
+import { useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,14 +11,13 @@ import {
   MessageCircle,
   Crown,
   Settings,
-  Send,
   Sparkles,
-  MoreHorizontal,
   Flag,
   Menu,
   X,
   Mic,
   Square,
+  Loader2,
 } from "lucide-react";
 
 interface ChatMessage {
@@ -57,6 +57,7 @@ export function ChatRoom({
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+  const { t, language } = useLanguage();
 
   const { isConnected, lastMessage, sendMessage } = useWebSocket();
 
@@ -172,6 +173,7 @@ export function ChatRoom({
         body: JSON.stringify({
           conversationHistory,
           sessionId,
+          language,
         }),
       });
 
@@ -364,59 +366,63 @@ export function ChatRoom({
           <button
             onClick={() => setSidebarVisible(!sidebarVisible)}
             className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition"
-            title={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
+            title={sidebarVisible ? t("hide_sidebar") : t("show_sidebar")}
           >
             <Menu className="w-5 h-5" />
           </button>
         </div>
 
-        <nav className={`flex-1 ${sidebarVisible ? "px-3" : "px-2"} space-y-1 mt-8`}>
+        <nav
+          className={`flex-1 ${
+            sidebarVisible ? "px-3" : "px-2"
+          } space-y-1 mt-8`}
+        >
           <button
             onClick={() => router.push("/chat")}
             className={`w-full flex items-center gap-3 rounded-lg bg-purple-600 text-white font-medium ${
               sidebarVisible ? "px-4 py-3" : "p-3 justify-center"
             }`}
-            title="Active Chat"
+            title={t("nav_activeChat")}
           >
-            <MessageCircle className="w-5 h-5 flex-shrink-0" />
-            {sidebarVisible && <span>Active Chat</span>}
+            <MessageCircle className="w-5 h-5 shrink-0" />
+            {sidebarVisible && <span>{t("nav_activeChat")}</span>}
           </button>
           <button
             onClick={() => router.push("/premium")}
             className={`w-full flex items-center gap-3 rounded-lg text-gray-400 hover:bg-white/5 transition ${
               sidebarVisible ? "px-4 py-3" : "p-3 justify-center"
             }`}
-            title="Premium"
+            title={t("nav_premium")}
           >
-            <Crown className="w-5 h-5 flex-shrink-0" />
-            {sidebarVisible && <span>Premium</span>}
+            <Crown className="w-5 h-5 shrink-0" />
+            {sidebarVisible && <span>{t("nav_premium")}</span>}
           </button>
           <button
             onClick={() => router.push("/settings")}
             className={`w-full flex items-center gap-3 rounded-lg text-gray-400 hover:bg-white/5 transition ${
               sidebarVisible ? "px-4 py-3" : "p-3 justify-center"
             }`}
-            title="Settings"
+            title={t("nav_settings")}
           >
-            <Settings className="w-5 h-5 flex-shrink-0" />
-            {sidebarVisible && <span>Settings</span>}
+            <Settings className="w-5 h-5 shrink-0" />
+            {sidebarVisible && <span>{t("nav_settings")}</span>}
           </button>
         </nav>
 
-        {/* User profile at bottom */}
+        {/* User profile at bottom
         {sidebarVisible && (
-          <div className="p-4 border-t border-white/10">
+          <div className="p-4 ">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
                 {currentUserId.slice(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-base font-medium text-white truncate">You</p>
-                <p className="text-xs text-gray-500">Online</p>
+                <p className="text-xs text-gray-500">{t("online")}</p>
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Main Chat Area */}
@@ -429,10 +435,12 @@ export function ChatRoom({
             </div>
             <div>
               <h2 className="text-white font-semibold text-lg">
-                Stranger #{partnerId.slice(-4)}
+                {t("stranger")} #{partnerId.slice(-4)}
               </h2>
               <p className="text-sm text-gray-400">
-                {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
+                {isConnected
+                  ? `🟢 ${t("connected")}`
+                  : `🔴 ${t("disconnected")}`}
               </p>
             </div>
           </div>
@@ -440,7 +448,7 @@ export function ChatRoom({
             <button
               onClick={handleReport}
               className="p-2 text-gray-400 hover:text-red-400 hover:bg-white/5 rounded-lg transition"
-              title="Report user"
+              title={t("report_user")}
             >
               <Flag className="w-5 h-5" />
             </button>
@@ -448,7 +456,7 @@ export function ChatRoom({
               onClick={handleNextStranger}
               className="bg-purple-600 hover:bg-purple-700 text-white font-medium"
             >
-              Next Stranger →
+              {t("next_stranger")}
             </Button>
           </div>
         </div>
@@ -458,20 +466,18 @@ export function ChatRoom({
           {/* System message */}
           <div className="flex justify-center">
             <div className="bg-white/5 text-gray-400 text-xs px-4 py-2 rounded-full">
-              TODAY 10:23 AM
+              {t("today")} 10:23 AM
             </div>
           </div>
           <div className="flex justify-center">
             <div className="bg-white/5 text-gray-400 text-xs px-4 py-2 rounded-full">
-              You are now chatting with a random stranger. Say hi! 👋
+              {t("chatting_with_stranger")}
             </div>
           </div>
 
           {messages.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">
-                No messages yet. Start the conversation!
-              </p>
+              <p className="text-gray-500 mb-4">{t("no_messages")}</p>
             </div>
           )}
 
@@ -527,13 +533,12 @@ export function ChatRoom({
                 </button>
               </div>
               <p className="text-gray-400 text-sm mb-4">
-                Please tell us why you&rsquo;re reporting Stranger #
-                {partnerId.slice(-4)}. Your report will be reviewed by our team.
+                {t("report_description", { stranger: partnerId.slice(-4) })}
               </p>
               <textarea
                 value={reportReason}
                 onChange={(e) => setReportReason(e.target.value)}
-                placeholder="Describe the issue..."
+                placeholder={t("describe_issue")}
                 rows={4}
                 className="w-full bg-[#0f0f1e] border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-gray-500 focus:border-purple-500 focus:outline-none resize-none"
               />
@@ -542,14 +547,14 @@ export function ChatRoom({
                   onClick={cancelReport}
                   className="flex-1 bg-white/5 hover:bg-white/10 text-white"
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   onClick={submitReport}
                   disabled={!reportReason.trim() || isSubmittingReport}
                   className="flex-1 bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
                 >
-                  {isSubmittingReport ? "Submitting..." : "Submit Report"}
+                  {isSubmittingReport ? t("submitting") : t("submit_report")}
                 </Button>
               </div>
             </div>
@@ -563,7 +568,7 @@ export function ChatRoom({
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-purple-400" />
                 <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-                  AI Conversation Starters
+                  {t("aiIcebreakers")}
                 </span>
               </div>
               <button
@@ -593,7 +598,7 @@ export function ChatRoom({
             <div className="mb-3 flex items-center justify-center gap-3 text-red-400">
               <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
               <span className="text-sm font-medium">
-                Recording... {formatTime(recordingTime)}
+                {t("recording")} {formatTime(recordingTime)}
               </span>
             </div>
           )}
@@ -602,9 +607,13 @@ export function ChatRoom({
               onClick={handleGenerateIcebreakers}
               disabled={loadingIcebreakers || isRecording}
               className="p-2 text-gray-400 hover:text-purple-400 hover:bg-white/5 rounded-lg transition disabled:opacity-50"
-              title="Get AI suggestions"
+              title={t("ai_suggestions")}
             >
-              <Sparkles className="w-5 h-5" />
+              {loadingIcebreakers ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Sparkles className="w-5 h-5" />
+              )}
             </button>
             <Input
               value={inputValue}
@@ -612,7 +621,7 @@ export function ChatRoom({
               onKeyPress={(e) =>
                 e.key === "Enter" && !e.shiftKey && handleSendMessage()
               }
-              placeholder="Type a message..."
+              placeholder={t("placeholder_type_message")}
               disabled={isRecording}
               className="flex-1 bg-[#0f0f1e] border-white/10 text-white placeholder:text-gray-500 focus:border-purple-500 disabled:opacity-50"
             />
@@ -620,7 +629,7 @@ export function ChatRoom({
               <button
                 onClick={stopRecording}
                 className="p-3 text-red-400 hover:text-red-300 hover:bg-white/5 rounded-lg transition"
-                title="Stop recording"
+                title={t("recording")}
               >
                 <Square className="w-5 h-5" />
               </button>
@@ -628,7 +637,7 @@ export function ChatRoom({
               <button
                 onClick={startRecording}
                 className="p-3 text-gray-400 hover:text-purple-400 hover:bg-white/5 rounded-lg transition"
-                title="Record voice message"
+                title={t("voice_message")}
               >
                 <Mic className="w-5 h-5" />
               </button>
@@ -638,13 +647,13 @@ export function ChatRoom({
               disabled={!inputValue.trim() || isRecording}
               className="bg-purple-600 hover:bg-purple-700 text-white px-6 font-medium disabled:opacity-50"
             >
-              Send →
+              {t("send")}
             </Button>
           </div>
           <p className="text-xs text-gray-600 mt-2 text-center">
-            Chats are anonymous and encrypted.{" "}
+            {t("chats_anonymous")}{" "}
             <span className="underline cursor-pointer">
-              Community Guidelines
+              {t("community_guidelines")}
             </span>
           </p>
         </div>

@@ -4,7 +4,7 @@ import { generateContextualIcebreakers } from "@/lib/icebreaker";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { conversationHistory, user1Prefs, user2Prefs } = body;
+    const { conversationHistory, user1Prefs, user2Prefs, language } = body;
 
     if (!conversationHistory || !Array.isArray(conversationHistory)) {
       return NextResponse.json(
@@ -16,7 +16,8 @@ export async function POST(request: Request) {
     const icebreakers = await generateContextualIcebreakers(
       conversationHistory,
       user1Prefs,
-      user2Prefs
+      user2Prefs,
+      language || "en-US"
     );
 
     return NextResponse.json({ icebreakers });
