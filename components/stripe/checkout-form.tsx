@@ -7,11 +7,13 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { useLanguage } from "@/hooks/use-language";
 
 export function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+  const { t } = useLanguage();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -68,21 +70,23 @@ export function CheckoutForm() {
         className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-lg transition-colors flex items-center justify-center gap-2"
       >
         <span className="material-symbols-outlined">lock</span>
-        <span>{isProcessing ? "Processing..." : "Pay $4.99"}</span>
+        <span>
+          {isProcessing
+            ? t("processing")
+            : t("payWithAmount", { amount: "$4.99" })}
+        </span>
       </button>
 
       {/* Footer Info */}
       <div className="space-y-3">
         <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
-          <span>Powered by</span>
+          <span>{t("poweredBy")}</span>
           <span className="text-purple-400 font-semibold">Stripe</span>
           <span>|</span>
-          <span>SSL Encrypted Payment</span>
+          <span>{t("sslEncrypted")}</span>
         </div>
         <p className="text-xs text-gray-500 text-center leading-relaxed">
-          By confirming your subscription, you allow Anonymous Chat to charge
-          your card for this payment and future payments in accordance with our
-          Terms.
+          {t("subscriptionNotice", { app: "Anonymous Chat" })}
         </p>
       </div>
     </form>

@@ -1,28 +1,34 @@
-'use client';
+"use client";
+
+import { useLanguage } from "@/hooks/use-language";
 
 export default function CheckoutButton({ priceId }: { priceId: string }) {
+  const { t } = useLanguage();
   const handleCheckout = async () => {
     try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priceId }),
       });
 
       const { url } = await response.json();
-      
+
       // Direct redirect to Stripe Checkout
       if (url) {
         window.location.href = url;
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
-    <button onClick={handleCheckout} className="bg-blue-600 text-white px-6 py-3 rounded">
-      Buy Now
+    <button
+      onClick={handleCheckout}
+      className="bg-blue-600 text-white px-6 py-3 rounded"
+    >
+      <span>{t("buyNow")}</span>
     </button>
   );
 }

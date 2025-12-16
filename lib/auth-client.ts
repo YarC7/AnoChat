@@ -8,7 +8,12 @@ export const authClient = createAuthClient({
         ...context,
         headers: {
           ...context.headers,
+          ...(context.body ? { "Content-Type": "application/json" } : {}),
         },
+        body:
+          context.body && typeof context.body !== "string"
+            ? JSON.stringify(context.body)
+            : context.body,
       };
     },
     onResponse: (context) => {

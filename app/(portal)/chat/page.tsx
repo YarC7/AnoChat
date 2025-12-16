@@ -16,6 +16,8 @@ import {
   PlusCircle,
   Send,
 } from "lucide-react";
+import { LocaleText } from "@/components/ui/locale-text";
+import { useLanguage } from "@/hooks/use-language";
 
 interface Message {
   id: number;
@@ -26,6 +28,7 @@ interface Message {
 
 export default function ChatPage() {
   const router = useRouter();
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -83,7 +86,9 @@ export default function ChatPage() {
             <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <MessageCircle className="text-white text-xl" />
             </div>
-            <span className="text-white font-bold text-lg">StrangerChat</span>
+            <span className="text-white font-bold text-lg">
+              <LocaleText k="appName" />
+            </span>
           </div>
         </div>
 
@@ -91,24 +96,24 @@ export default function ChatPage() {
         <nav className="flex-1 p-4 space-y-2">
           <NavItem
             icon={<MessageCircle />}
-            label="Active Chat"
+            label={<LocaleText k="nav_activeChat" />}
             active
             onClick={() => router.push("/chat")}
           />
           <NavItem
             icon={<Users />}
-            label="Matches"
+            label={<LocaleText k="nav_matches" />}
             badge="2"
             onClick={() => router.push("/matches")}
           />
           <NavItem
             icon={<Crown />}
-            label="Premium"
+            label={<LocaleText k="nav_premium" />}
             onClick={() => router.push("/premium")}
           />
           <NavItem
             icon={<Settings />}
-            label="Settings"
+            label={<LocaleText k="nav_settings" />}
             onClick={() => router.push("/settings")}
           />
         </nav>
@@ -126,7 +131,7 @@ export default function ChatPage() {
               <p className="text-white font-semibold text-sm">Sarah_99</p>
               <p className="text-green-500 text-xs flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                Online
+                <LocaleText k="online" />
               </p>
             </div>
           </div>
@@ -145,11 +150,11 @@ export default function ChatPage() {
               <div className="flex items-center gap-2">
                 <h2 className="text-white font-semibold">Stranger #4291</h2>
                 <span className="text-xs bg-purple-600/20 text-purple-400 px-2 py-0.5 rounded font-medium">
-                  MATCHED
+                  <LocaleText k="matched" />
                 </span>
               </div>
               <p className="text-xs text-gray-400">
-                Interest match:{" "}
+                <LocaleText k="interestMatchPrefix" />{" "}
                 <span className="text-purple-400">Sci-Fi Movies</span>
               </p>
             </div>
@@ -166,7 +171,9 @@ export default function ChatPage() {
               onClick={handleNextStranger}
               className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
             >
-              <span>Next Stranger</span>
+              <span>
+                <LocaleText k="nextStranger" />
+              </span>
               <SkipForward className="text-lg" />
             </button>
           </div>
@@ -232,27 +239,27 @@ export default function ChatPage() {
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="text-purple-400 text-sm" />
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                AI Conversation Starters
+                <LocaleText k="aiIcebreakers" />
               </h3>
             </div>
             <div className="flex flex-wrap gap-2">
               <StarterButton
                 icon={<Smile />}
-                text="Tell me a dad joke"
+                text={<LocaleText k="starter_dad_joke" />}
                 onClick={() => handleAiStarter("Tell me a dad joke")}
               />
               <StarterButton
-                text="Would you rather...? 🤔"
+                text={<LocaleText k="starter_would_you_rather" />}
                 onClick={() => handleAiStarter("Would you rather...?")}
               />
               <StarterButton
-                text="Best travel story 🏝️"
+                text={<LocaleText k="starter_best_travel" />}
                 onClick={() =>
                   handleAiStarter("What's your best travel story?")
                 }
               />
               <StarterButton
-                text="Movie recommendation 🎬"
+                text={<LocaleText k="starter_movie_recommendation" />}
                 onClick={() => handleAiStarter("Any movie recommendations?")}
               />
             </div>
@@ -270,7 +277,7 @@ export default function ChatPage() {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              placeholder="Type a message..."
+              placeholder={t("placeholder_type_message")}
               className="flex-1 bg-[#2a2a44] text-white placeholder-gray-500 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <button className="p-2 hover:bg-white/5 rounded-lg transition-colors">

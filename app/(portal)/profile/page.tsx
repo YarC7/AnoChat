@@ -3,6 +3,7 @@
 import { ProtectedLayout } from "@/components/layout/protected-layout";
 import { useSession } from "@/lib/auth-client";
 import Image from "next/image";
+import { LocaleText } from "@/components/ui/locale-text";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
@@ -30,11 +31,13 @@ export default function ProfilePage() {
               </div>
 
               <div className="border-t pt-6">
-                <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
+                <h2 className="text-xl font-semibold mb-4">
+                  <LocaleText k="profileInformation" />
+                </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Full Name
+                      <LocaleText k="fullName" />
                     </label>
                     <input
                       type="text"
@@ -44,7 +47,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Email
+                      <LocaleText k="emailLabel" />
                     </label>
                     <input
                       type="email"
@@ -54,7 +57,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <button className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700">
-                    Save Changes
+                    <LocaleText k="saveChanges" />
                   </button>
                 </div>
               </div>

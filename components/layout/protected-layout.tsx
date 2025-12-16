@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { LocaleText } from "@/components/ui/locale-text";
 
 export function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { data: session, isPending } = useSession();
@@ -36,20 +37,22 @@ export function ProtectedLayout({ children }: { children: React.ReactNode }) {
           <div className="flex justify-between h-16">
             <div className="flex">
               <Link href="/dashboard" className="flex items-center">
-                <span className="text-xl font-bold text-blue-600">MyApp</span>
+                <span className="text-xl font-bold text-blue-600">
+                  <LocaleText k="appName" />
+                </span>
               </Link>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 <Link
                   href="/dashboard"
                   className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900 hover:text-blue-600"
                 >
-                  Dashboard
+                  <LocaleText k="dashboardTitle" />
                 </Link>
                 <Link
                   href="/profile"
                   className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
                 >
-                  Profile
+                  <LocaleText k="profileInformation" />
                 </Link>
               </div>
             </div>

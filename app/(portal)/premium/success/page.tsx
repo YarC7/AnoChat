@@ -28,39 +28,38 @@ export default function SuccessPage() {
 
           {/* Title */}
           <h1 className="text-white text-3xl font-bold mb-4">
-            Payment Successful!
+            <LocaleText k="paymentSuccessful" />
           </h1>
 
           {/* Description */}
           <p className="text-gray-400 text-base mb-8">
-            Your premium subscription has been activated. Enjoy all the premium
-            features!
+            <LocaleText k="premiumActivated" />
           </p>
 
           {/* Features */}
           <div className="bg-[#252540] rounded-xl p-6 mb-6 text-left">
             <h3 className="text-white font-semibold mb-3">
-              You now have access to:
+              <LocaleText k="youNowHaveAccess" />
             </h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li className="flex items-center gap-2">
                 <Check className="text-purple-400 text-lg" />
-                Unlimited Gender Filtering
+                <LocaleText k="success_feature_unlimited_filtering" />
               </li>
               <li className="flex items-center gap-2">
                 <Check className="text-purple-400 text-lg" />
-                50 AI Icebreakers / Day
+                <LocaleText k="success_feature_icebreakers" />
               </li>
               <li className="flex items-center gap-2">
                 <Check className="text-purple-400 text-lg" />
-                Ad-Free Experience
+                <LocaleText k="success_feature_ad_free" />
               </li>
             </ul>
           </div>
 
           {/* Redirect Info */}
           <p className="text-gray-500 text-sm">
-            Redirecting to dashboard in a few seconds...
+            <LocaleText k="redirectingDashboard" />
           </p>
 
           {/* Manual Redirect Button */}
@@ -68,7 +67,7 @@ export default function SuccessPage() {
             onClick={() => router.push("/dashboard")}
             className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition-colors"
           >
-            Go to Dashboard Now
+            <LocaleText k="goToDashboardNow" />
           </button>
         </div>
       </div>

@@ -18,6 +18,7 @@ import {
   Brain,
   ArrowLeft,
 } from "lucide-react";
+import { LocaleText } from "@/components/ui/locale-text";
 
 type PlanType = "personal" | "business";
 
@@ -42,31 +43,30 @@ export default function PremiumPage() {
           className="absolute top-0 left-0 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Cancel
+          <LocaleText k="cancel" />
         </button>
         <h1 className="text-white text-3xl font-bold text-center mb-8">
-          Nâng cấp gói của bạn
+          <LocaleText k="premiumHeader" />
         </h1>
-      </div>
-
-      {/* Pricing Cards */}
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Free Plan */}
         <div className="bg-[#1e1e32] rounded-3xl border border-white/10 p-8">
-          <h2 className="text-white text-2xl font-bold mb-6">Free</h2>
+          <h2 className="text-white text-2xl font-bold mb-6">
+            <LocaleText k="plan_free" />
+          </h2>
 
           <div className="mb-6">
             <div className="flex items-baseline gap-2 mb-2">
               <span className="text-white text-5xl font-bold">₫0</span>
               <span className="text-gray-400">VNĐ / tháng</span>
             </div>
-            <p className="text-gray-400 text-sm">Xem AI có thể làm gì</p>
+            <p className="text-gray-400 text-sm">
+              <LocaleText k="freeSubtitle" />
+            </p>
           </div>
 
           {currentPlan === "free" && (
             <div className="mb-6">
               <div className="bg-[#252540] text-white text-center py-3 rounded-lg font-medium">
-                Gói hiện tại của bạn
+                <LocaleText k="currentPlanLabel" />
               </div>
             </div>
           )}
@@ -74,16 +74,19 @@ export default function PremiumPage() {
           <div className="space-y-3">
             <FeatureItem
               icon={<Sparkles />}
-              text="Nhận lời giải thích đơn giản"
+              text={<LocaleText k="feature_simple_explanations" />}
             />
             <FeatureItem
               icon={<MessageCircle />}
-              text="Thực hiện các đoạn nội dung dễ giải đáp những câu hỏi thường gặp"
+              text={<LocaleText k="feature_handle_queries" />}
             />
-            <FeatureItem icon={<Image />} text="Thử tính năng tạo hình ảnh" />
+            <FeatureItem
+              icon={<Image />}
+              text={<LocaleText k="feature_image_generation" />}
+            />
             <FeatureItem
               icon={<Info />}
-              text="Tiết kiệm bộ nhớ và ngữ cảnh hạn chế"
+              text={<LocaleText k="feature_memory" />}
             />
           </div>
         </div>
@@ -93,11 +96,13 @@ export default function PremiumPage() {
           {/* Recommended Badge */}
           <div className="absolute -top-3 right-8">
             <span className="bg-purple-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
-              ĐƯỢC ĐỀ XUẤT
+              <LocaleText k="recommended" />
             </span>
           </div>
 
-          <h2 className="text-white text-2xl font-bold mb-6">Business</h2>
+          <h2 className="text-white text-2xl font-bold mb-6">
+            <LocaleText k="plan_business" />
+          </h2>
 
           <div className="mb-6">
             <div className="flex items-baseline gap-2 mb-2">
@@ -105,7 +110,7 @@ export default function PremiumPage() {
               <span className="text-gray-400">VNĐ / tháng (theo phần VAT)</span>
             </div>
             <p className="text-gray-300 text-sm">
-              Hoàn thành nhiều công việc hơn với AI cho các nhóm
+              <LocaleText k="businessSubtitle" />
             </p>
           </div>
 
@@ -113,63 +118,63 @@ export default function PremiumPage() {
             onClick={handleUpgrade}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-xl transition-colors mb-6"
           >
-            Chuyển sang Business
+            <LocaleText k="upgradeToBusiness" />
           </button>
 
           <div className="space-y-3">
             <FeatureItem
               icon={<BadgeCheck />}
-              text="Tiền hành phần tích chuyên nghiệp"
+              text={<LocaleText k="biz_feature_analytics" />}
             />
             <FeatureItem
               icon={<MessageCircle />}
-              text="Nhận tin không giới hạn với GPT-5"
+              text={<LocaleText k="biz_feature_unlimited_messages" />}
             />
             <FeatureItem
               icon={<Palette />}
-              text="Tạo hình ảnh, video, slide và nhiều nội dung khác"
+              text={<LocaleText k="biz_feature_media" />}
             />
             <FeatureItem
               icon={<Lock />}
-              text="Bảo mật không gian của bạn bằng SSO, MFA và nhiều tính năng khác"
+              text={<LocaleText k="biz_feature_security" />}
             />
             <FeatureItem
               icon={<Shield />}
-              text="Bảo vệ quyền riêng tư tuyệt đối không sử dụng dữ liệu cho huấn luyện"
+              text={<LocaleText k="biz_feature_privacy" />}
             />
             <FeatureItem
               icon={<Users />}
-              text="Chia sẻ dữ án và GPT tùy chỉnh"
+              text={<LocaleText k="biz_feature_sharing" />}
             />
             <FeatureItem
               icon={<Link />}
-              text="Tích hợp với SharePoint và các công cụ khác"
+              text={<LocaleText k="biz_feature_integrations" />}
             />
             <FeatureItem
               icon={<LayoutDashboard />}
-              text="Đơn giản hóa quy trình thanh toán và quản lý người dùng"
+              text={<LocaleText k="biz_feature_workflows" />}
             />
             <FeatureItem
               icon={<BarChart />}
-              text="Ghi lại chi chú cuộc họp bằng tính năng chép lời"
+              text={<LocaleText k="biz_feature_transcription" />}
             />
             <FeatureItem
               icon={<Brain />}
-              text="Triển khai các tác nhân để viết mã và nghiên cứu"
+              text={<LocaleText k="biz_feature_agents" />}
             />
           </div>
 
           <div className="mt-6 pt-6 border-t border-white/10">
             <p className="text-xs text-gray-400">
-              Dành cho 2+ người dùng, thanh toán hằng năm
+              <LocaleText k="biz_footer_users" />
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              Không giới hạn thuốc vào các quy định bảo vệ tránh lạm dụng.{" "}
+              <LocaleText k="biz_footer_note" />{" "}
               <a
                 href="#"
                 className="text-purple-400 hover:text-purple-300 underline"
               >
-                Tìm hiểu thêm
+                <LocaleText k="learnMore" />
               </a>
             </p>
           </div>
@@ -181,7 +186,7 @@ export default function PremiumPage() {
 
 interface FeatureItemProps {
   icon: React.ReactNode;
-  text: string;
+  text: React.ReactNode;
 }
 
 function FeatureItem({ icon, text }: FeatureItemProps) {
