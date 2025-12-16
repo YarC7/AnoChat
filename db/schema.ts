@@ -81,3 +81,15 @@ export const message = pgTable("message", {
   audioUrl: text("audioUrl"), // Cloudinary URL for voice messages
   createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
+
+export const userMemory = pgTable("user_memory", {
+  id: text("id").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  namespace: text("namespace").notNull().default("default"),
+  key: text("key").notNull(),
+  value: text("value"), // JSON serialized string
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
+});
