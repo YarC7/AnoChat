@@ -8,6 +8,10 @@ export const user = pgTable("user", {
   image: text("image"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
+  // Chat preferences
+  chatStyle: text("chatStyle"),
+  gender: text("gender"),
+  isSearching: boolean("isSearching").default(false),
 });
 
 export const session = pgTable("session", {
@@ -48,4 +52,30 @@ export const verification = pgTable("verification", {
   expiresAt: timestamp("expiresAt").notNull(),
   createdAt: timestamp("createdAt"),
   updatedAt: timestamp("updatedAt"),
+});
+
+export const chatSession = pgTable("chatSession", {
+  id: text("id").primaryKey(),
+  user1Id: text("user1Id")
+    .notNull()
+    .references(() => user.id),
+  user2Id: text("user2Id")
+    .notNull()
+    .references(() => user.id),
+  status: text("status").notNull().default("active"), // active, ended
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  endedAt: timestamp("endedAt"),
+});
+
+export const message = pgTable("message", {
+  id: text("id").primaryKey(),
+  sessionId: text("sessionId")
+    .notNull()
+    .references(() => chatSession.id),
+  senderId: text("senderId")
+    .notNull()
+    .references(() => user.id),
+  content: text("content").notNull(),
+  type: text("type").notNull().default("text"), // text, icebreaker, system
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
 });

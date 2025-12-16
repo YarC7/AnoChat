@@ -1,4 +1,6 @@
 import Groq from "groq-sdk";
+import { redis } from "./redis";
+
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "GROQ API KEY" });
 
 interface UserPreferences {
@@ -7,61 +9,87 @@ interface UserPreferences {
 }
 
 /**
- * Generate AI-powered icebreakers based on user preferences
- * Falls back to mock data if Gemini API is unavailable
+ * Generate AI-powered icebreakers with failover: Qwen -> Mock
  */
 export async function generateIcebreakers(
   user1Prefs?: UserPreferences,
   user2Prefs?: UserPreferences
 ): Promise<string[]> {
-  // Fallback to mock data if API key is not configured
-  if (!process.env.GROQ_API_KEY) {
-    console.warn("GROQ_API_KEY not configured, using mock icebreakers");
-    return generateMockIcebreakers();
+  const cacheKey = `icebreaker:${user1Prefs?.chatStyle || "default"}:${
+    user2Prefs?.chatStyle || "default"
+  }`;
+
+  // Check cache first
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
   }
 
-  try {
-    const systemPrompt =
-      "You are a friendly conversation starter assistant. Generate engaging, fun, and appropriate icebreaker questions for strangers to start chatting. Keep them light, positive, and universally relatable.\n\n" +
-      "IMPORTANT: Output ONLY the 3 questions, nothing else. No explanations, no commentary, no thinking process. Just the questions.";
+  let icebreakers: string[] = [];
 
-    const userPrompt = buildPrompt(user1Prefs, user2Prefs);
-
-    const result = await groq.chat.completions.create({
-      model: "qwen/qwen3-32b",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.9,
-      max_tokens: 150,
-    });
-
-    const response = result.choices[0].message.content;
-    if (!response) {
-      throw new Error("Empty response from Groq");
+  // 1. Try Qwen (via Groq)
+  if (process.env.GROQ_API_KEY) {
+    try {
+      icebreakers = await generateWithQwen(user1Prefs, user2Prefs);
+      if (icebreakers.length >= 3) {
+        await redis.setex(cacheKey, 300, JSON.stringify(icebreakers)); // Cache for 5 min
+        return icebreakers;
+      }
+    } catch (error: any) {
+      console.warn("Qwen failed:", error.message || error);
     }
-
-    // Parse the response - expecting numbered list
-    const icebreakers = response
-      .split("\n")
-      .filter((line) => line.trim().length > 0)
-      .map((line) => line.replace(/^\d+\.\s*/, "").trim())
-      .filter((line) => line.length > 10); // Filter out very short lines
-
-    // Ensure we have exactly 3 icebreakers
-    if (icebreakers.length >= 3) {
-      return icebreakers.slice(0, 3);
-    }
-
-    // Fallback if parsing failed
-    console.warn("Failed to parse AI response, using mock data");
-    return generateMockIcebreakers();
-  } catch (error) {
-    console.error("Error generating AI icebreakers:", error);
-    // Fallback to mock data on error
-    return generateMockIcebreakers();
   }
+
+  // 2. Final fallback to mock data
+  console.warn("Qwen API unavailable, using mock icebreakers");
+  icebreakers = generateMockIcebreakers();
+  return icebreakers;
+}
+
+/**
+ * Generate icebreakers using Qwen API (via Groq)
+ */
+async function generateWithQwen(
+  user1Prefs?: UserPreferences,
+  user2Prefs?: UserPreferences
+): Promise<string[]> {
+  const systemPrompt =
+    "You are a friendly conversation starter assistant. Generate engaging, fun, and appropriate icebreaker questions for strangers to start chatting. Keep them light, positive, and universally relatable.\n\n" +
+    "IMPORTANT: Output ONLY the 3 questions, nothing else. No explanations, no commentary, no thinking process. Just the questions.";
+
+  const userPrompt = buildPrompt(user1Prefs, user2Prefs);
+
+  const userPrompt = buildPrompt(user1Prefs, user2Prefs);
+
+  const result = await groq.chat.completions.create({
+    model: "qwen/qwen3-32b",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    temperature: 0.9,
+    max_tokens: 150,
+  });
+
+  const response = result.choices[0].message.content;
+  if (!response) {
+    throw new Error("Empty response from Qwen");
+  }
+
+  return parseIcebreakers(response);
+}
+
+/**
+ * Parse icebreakers from LLM response
+ */
+function parseIcebreakers(response: string): string[] {
+  const icebreakers = response
+    .split("\n")
+    .filter((line) => line.trim().length > 0)
+    .map((line) => line.replace(/^\d+\.\s*/, "").trim())
+    .filter((line) => line.length > 10);
+
+  return icebreakers.slice(0, 3);
 }
 
 /**
@@ -112,74 +140,88 @@ function getStyleContext(styles: string[]): string {
 }
 
 /**
- * Generate context-aware icebreakers based on conversation history
- * Analyzes recent messages to suggest relevant follow-up topics
+ * Generate context-aware icebreakers with failover: Qwen -> Mock
  */
 export async function generateContextualIcebreakers(
   conversationHistory: string[],
   user1Prefs?: UserPreferences,
   user2Prefs?: UserPreferences
 ): Promise<string[]> {
-  // Fallback if API key not configured
-  if (!process.env.GROQ_API_KEY) {
-    console.warn("GROQ_API_KEY not configured, using mock icebreakers");
-    return generateMockIcebreakers();
+  const recentMessages = conversationHistory.slice(-10).join("\n");
+  const cacheKey = `contextual:${Buffer.from(recentMessages)
+    .toString("base64")
+    .slice(0, 50)}`;
+
+  // Check cache
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    return JSON.parse(cached);
   }
 
-  try {
-    // Build conversation context
-    const recentMessages = conversationHistory.slice(-10).join("\n");
+  let icebreakers: string[] = [];
 
-    const systemPrompt =
-      "You are a conversation facilitator. Analyze the conversation below and suggest 3 engaging follow-up questions that:\n" +
-      "1. Build on topics already discussed\n" +
-      "2. Deepen the conversation naturally\n" +
-      "3. Are open-ended and interesting\n" +
-      "4. Match the tone and style of the existing chat\n\n" +
-      "Keep questions friendly, positive, and appropriate.\n\n" +
-      "IMPORTANT: Output ONLY the 3 questions, nothing else. No explanations, no commentary, no thinking process.";
-
-    const userPrompt =
-      `Recent conversation:\n${recentMessages}\n\nGenerate 3 follow-up questions based on this conversation.\n\n` +
-      "OUTPUT FORMAT:\n" +
-      "1. [First question]\n" +
-      "2. [Second question]\n" +
-      "3. [Third question]\n\n" +
-      "Do not include any other text. ONLY output the 3 numbered questions.";
-
-    const result = await groq.chat.completions.create({
-      model: "qwen/qwen3-32b",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.8,
-      max_tokens: 150,
-    });
-
-    const response = result.choices[0].message.content;
-    if (!response) {
-      throw new Error("Empty response from Groq");
+  // 1. Try Qwen (via Groq)
+  if (process.env.GROQ_API_KEY) {
+    try {
+      icebreakers = await generateContextualWithQwen(conversationHistory);
+      if (icebreakers.length >= 3) {
+        await redis.setex(cacheKey, 300, JSON.stringify(icebreakers));
+        return icebreakers;
+      }
+    } catch (error: any) {
+      console.warn("Qwen contextual failed:", error.message || error);
     }
-
-    // Parse response
-    const icebreakers = response
-      .split("\n")
-      .filter((line) => line.trim().length > 0)
-      .map((line) => line.replace(/^\d+\.\s*/, "").trim())
-      .filter((line) => line.length > 10);
-
-    if (icebreakers.length >= 3) {
-      return icebreakers.slice(0, 3);
-    }
-
-    // Fallback
-    console.warn("Failed to parse contextual AI response, using mock data");
-    return generateMockIcebreakers();
-  } catch (error) {
-    console.error("Error generating contextual icebreakers:", error);
-    return generateMockIcebreakers();
   }
+
+  // 2. Final fallback
+  console.warn("Qwen API unavailable, using mock");
+  return generateMockIcebreakers();
+}
+
+/**
+ * Generate contextual icebreakers using Qwen
+ */
+async function generateContextualWithQwen(
+  conversationHistory: string[]
+): Promise<string[]> {
+  const recentMessages = conversationHistory.slice(-10).join("\n");
+
+  const systemPrompt =
+    "You are a conversation facilitator. Analyze the conversation below and suggest 3 engaging follow-up questions that:\n" +
+    "1. Build on topics already discussed\n" +
+    "2. Deepen the conversation naturally\n" +
+    "3. Are open-ended and interesting\n" +
+    "4. Match the tone and style of the existing chat\n\n" +
+    "Keep questions friendly, positive, and appropriate.\n\n" +
+    "IMPORTANT: Output ONLY the 3 questions, nothing else. No explanations, no commentary, no thinking process.";
+
+  const userPrompt =
+    `Recent conversation:\n${recentMessages}\n\nGenerate 3 follow-up questions based on this conversation.\n\n` +
+    "OUTPUT FORMAT:\n" +
+    "1. [First question]\n" +
+    "2. [Second question]\n" +
+    "3. [Third question]\n\n" +
+    "Do not include any other text. ONLY output the 3 numbered questions.";
+
+  "3. [Third question]\n\n" +
+    "Do not include any other text. ONLY output the 3 numbered questions.";
+
+  const result = await groq.chat.completions.create({
+    model: "qwen/qwen3-32b",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    temperature: 0.8,
+    max_tokens: 150,
+  });
+
+  const response = result.choices[0].message.content;
+  if (!response) {
+    throw new Error("Empty response from Qwen");
+  }
+
+  return parseIcebreakers(response);
 }
 
 /**
