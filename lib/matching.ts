@@ -44,12 +44,36 @@ function getTargetGenders(
 }
 
 /**
- * Kiểm tra Match theo Giới tính với Tính Đối xứng (Bidirectional)
- * @param userAGender - Giới tính của User A
- * @param userAPreference - Sở thích của User A
- * @param userBGender - Giới tính của User B
- * @param userBPreference - Sở thích của User B
- * @returns true nếu A và B match nhau về giới tính
+ * Preference-only match: ignore stored user genders and match based only on
+ * users' selected preferences in the lobby (any/male/female).
+ * Two users match if their target gender sets intersect (i.e., there exists at
+ * least one target gender both users accept).
+ */
+function isPreferenceMatch(aPref: Preference, bPref: Preference): boolean {
+  // Fast path: if either side selects 'any' they accept anyone
+  if (aPref === "any" || bPref === "any") return true;
+
+  const aTargets = getTargetGenders(null, aPref);
+  const bTargets = getTargetGenders(null, bPref);
+
+  // If target sets overlap, match
+  if (aTargets.some((g) => bTargets.includes(g))) return true;
+
+  // New rule: complementary explicit preferences (male <-> female) should match
+  // e.g., A.pref='female' and B.pref='male' => match immediately
+  if (
+    (aPref === "female" && bPref === "male") ||
+    (aPref === "male" && bPref === "female")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Bidirectional gender match based on actual stored genders + preferences.
+ * Returns true only if both sides accept the other's actual gender.
  */
 function isGenderMatch(
   userAGender: Gender,
@@ -57,21 +81,14 @@ function isGenderMatch(
   userBGender: Gender,
   userBPreference: Preference
 ): boolean {
-  // 1. Xác định Mục tiêu của A (A's Target)
-  const aTargets = getTargetGenders(userAGender, userAPreference);
+  if (!userAGender || !userBGender) return false;
 
-  // 2. Xác định Mục tiêu của B (B's Target)
+  const aTargets = getTargetGenders(userAGender, userAPreference);
   const bTargets = getTargetGenders(userBGender, userBPreference);
 
-  // 3. Kiểm tra Điều kiện 1: A có muốn Match với B không?
-  // UserB.gender phải nằm trong danh sách mục tiêu của A
-  const condition1 = userBGender !== null && aTargets.includes(userBGender);
+  const condition1 = aTargets.includes(userBGender);
+  const condition2 = bTargets.includes(userAGender);
 
-  // 4. Kiểm tra Điều kiện 2: B có muốn Match với A không?
-  // UserA.gender phải nằm trong danh sách mục tiêu của B
-  const condition2 = userAGender !== null && bTargets.includes(userAGender);
-
-  // 5. Kết luận: Cả hai điều kiện đều phải đúng
   return condition1 && condition2;
 }
 
@@ -97,7 +114,7 @@ export async function joinMatchingQueue(
     // Store preference in a hash for quick access
     await redis.hset(PREF_HASH, userId, normalizedPref);
 
-    // Fetch current user's gender from DB
+    // Fetch current user's gender from DB for fallback checks only
     const currentUser = await db
       .select()
       .from(user)
@@ -123,26 +140,12 @@ export async function joinMatchingQueue(
           (await redis.hget(PREF_HASH, partnerId)) || "any";
         const partnerPref = String(partnerPrefRaw).toLowerCase() as Preference;
 
-        // Get partner's gender from DB
-        const partnerRows = await db
-          .select()
-          .from(user)
-          .where(eq(user.id, partnerId))
-          .limit(1);
-        const partnerGenderRaw = partnerRows?.[0]?.gender || null;
-        const partnerGender = partnerGenderRaw
-          ? (String(partnerGenderRaw).toLowerCase() as Gender)
-          : null;
+        // Preference-only matching (ignore DB genders). Match when target sets overlap.
+        if (isPreferenceMatch(normalizedPref, partnerPref)) {
+          console.log(
+            `[MATCH] User ${userId} matched with ${partnerId} via preference (${normalizedPref} + ${partnerPref})`
+          );
 
-        // Check bidirectional gender match
-        if (
-          isGenderMatch(
-            currentGender,
-            normalizedPref,
-            partnerGender,
-            partnerPref
-          )
-        ) {
           // Found compatible partner! Create match
           await redis.zrem(QUEUE_KEY, partnerId);
 
@@ -175,7 +178,10 @@ export async function joinMatchingQueue(
           // Cleanup preferences from hash
           await redis.hdel(PREF_HASH, userId, partnerId);
 
-          // Publish match notification to partner
+          // Publish match notification to BOTH users (for symmetry)
+          console.log(
+            `[NOTIFY] Publishing match to partner (${partnerId}): sessionId=${sessionId}, partnerId=${userId}`
+          );
           await redis.publish(
             "broadcast",
             JSON.stringify({
@@ -183,6 +189,94 @@ export async function joinMatchingQueue(
               userId: partnerId,
               sessionId,
               partnerId: userId,
+              timestamp: Date.now(),
+            })
+          );
+
+          console.log(
+            `[NOTIFY] Publishing match to current user (${userId}): sessionId=${sessionId}, partnerId=${partnerId}`
+          );
+          await redis.publish(
+            "broadcast",
+            JSON.stringify({
+              type: "match_found",
+              userId: userId,
+              sessionId,
+              partnerId: partnerId,
+              timestamp: Date.now(),
+            })
+          );
+
+          return { matched: true, sessionId, partnerId };
+        }
+
+        // Fallback: try bidirectional gender match using stored genders (hybrid)
+        const partnerRows = await db
+          .select()
+          .from(user)
+          .where(eq(user.id, partnerId))
+          .limit(1);
+        const partnerGenderRaw = partnerRows?.[0]?.gender || null;
+        const partnerGender = partnerGenderRaw
+          ? (String(partnerGenderRaw).toLowerCase() as Gender)
+          : null;
+
+        if (
+          isGenderMatch(
+            currentGender,
+            normalizedPref,
+            partnerGender,
+            partnerPref
+          )
+        ) {
+          // Found compatible partner via fallback
+          await redis.zrem(QUEUE_KEY, partnerId);
+
+          const sessionId = nanoid();
+          await db.insert(chatSession).values({
+            id: sessionId,
+            user1Id: userId,
+            user2Id: partnerId,
+            status: "active",
+            createdAt: new Date(),
+          });
+
+          await db
+            .update(user)
+            .set({ isSearching: false })
+            .where(eq(user.id, userId));
+          await db
+            .update(user)
+            .set({ isSearching: false })
+            .where(eq(user.id, partnerId));
+
+          await redis.setex(
+            `session:${sessionId}`,
+            3600,
+            JSON.stringify({ user1Id: userId, user2Id: partnerId })
+          );
+
+          // Cleanup preferences from hash
+          await redis.hdel(PREF_HASH, userId, partnerId);
+
+          // Publish match notification to BOTH users
+          await redis.publish(
+            "broadcast",
+            JSON.stringify({
+              type: "match_found",
+              userId: partnerId,
+              sessionId,
+              partnerId: userId,
+              timestamp: Date.now(),
+            })
+          );
+          await redis.publish(
+            "broadcast",
+            JSON.stringify({
+              type: "match_found",
+              userId: userId,
+              sessionId,
+              partnerId: partnerId,
               timestamp: Date.now(),
             })
           );
