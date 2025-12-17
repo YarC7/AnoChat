@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/hooks/use-language";
-import { LangSelector } from "@/components/ui/lang-selector";
 import "./globals.css";
 
 const geistSans = Geist({

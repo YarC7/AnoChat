@@ -23,9 +23,6 @@ export async function POST(
     if (sessions.length === 0) {
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
-
-    const session = sessions[0];
-
     // Update session status to ended
     await db
       .update(chatSession)
