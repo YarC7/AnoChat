@@ -59,7 +59,8 @@ jobs:
             cd "$APP_DIR"
 
             echo "Deploying image tag: $IMAGE_TAG"
-
+            echo "TOKEN LEN=${#GHCR_TOKEN}"
+            echo "GHCR_TOKEN=${#GHCR_TOKEN}"
             echo "$GHCR_TOKEN" | docker login ghcr.io -u yarc7 --password-stdin
 
             sed -i "s|^APP_IMAGE=.*|APP_IMAGE=ghcr.io/yarc7/anochat:${IMAGE_TAG}|" .env
