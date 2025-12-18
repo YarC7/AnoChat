@@ -1,124 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Playground Project 🚀
 
-## Getting Started
+A modern, full-stack web application built with Next.js 15, featuring real-time communication, AI-driven personalization, and secure payments.
 
-First, run the development server:
+## 🛠 Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Caching & Real-time**: [Redis](https://redis.io/) (Pub/Sub & Caching)
+- **Messaging**: [Apache Kafka](https://kafka.apache.org/) (Event-driven architecture)
+- **Authentication**: [Better Auth](https://www.better-auth.com/) with Google OAuth
+- **Payments**: [Stripe](https://stripe.com/) (Checkout & Webhooks)
+- **AI**: [Google Generative AI](https://ai.google.dev/) & [Groq](https://groq.com/)
+- **Infrastructure**: [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+
+## ✨ Key Features
+
+- **🔐 Secure Auth**: Seamless authentication using Google OAuth via Better Auth.
+- **💬 Real-time Chat**: High-performance chat system powered by WebSockets and Redis Pub/Sub.
+- **🤝 Matching System**: Real-time matching lobby for connecting users based on preferences.
+- **🤖 AI Icebreakers**: Contextual icebreaker generation to kickstart conversations.
+- **🧠 User Memory**: Persistent AI-driven user context for personalized experiences.
+- **💳 Premium Subscription**: Stripe integration for upgrading users to premium plans.
+- **📱 PWA Ready**: Progressive Web App support with offline capabilities and push notifications.
+- **🐳 Dockerized**: One-command setup for the entire development environment.
+
+## 📁 Project Structure
+
+```text
+app/                # Next.js App Router (Pages & API Routes)
+components/         # React Components (UI, Auth, Layout, PWA)
+db/                 # Database Schema & Drizzle Client
+drizzle/            # SQL Migrations
+hooks/              # Custom React Hooks (WebSocket, Language)
+lib/                # Core Logic (Auth, Chat, Kafka, Stripe, Memory)
+public/             # Static Assets & Service Worker
+scripts/            # Utility Scripts (WS Server, Docker Entrypoint)
+utils/              # Helper Functions
+bank/               # Documentation & Context Banks
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- Docker & Docker Compose
+
+### Local Development (with Docker)
+
+The easiest way to get started is using Docker Compose, which spins up Postgres, Redis, Adminer, and the App.
+
+1. **Clone the repository**
+2. **Set up environment variables**
+   Copy `.env.example` (if available) or create a `.env` file:
+   ```bash
+   DATABASE_URL=postgresql://postgres:postgres@db:5432/playground
+   REDIS_URL=redis://redis:6379
+   STRIPE_SECRET_KEY=sk_test_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   GOOGLE_CLIENT_ID=...
+   GOOGLE_CLIENT_SECRET=...
+   ```
+3. **Start the services**
+   ```bash
+   docker compose up --build
+   ```
+4. **Access the app**
+   - Web App: `http://localhost:3000`
+   - Adminer (DB UI): `http://localhost:1707`
+   - WebSocket Server: `ws://localhost:8080`
+
+### Manual Setup
+
+If you prefer to run services individually:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 💳 Payments & Webhooks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The project uses Stripe Checkout. Webhooks are handled at `/api/webhooks/stripe`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Testing Webhooks locally:**
 
-## Learn More
+1. Install [Stripe CLI](https://stripe.com/docs/stripe-cli).
+2. Run: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
+3. Use the provided webhook secret in your `.env`.
 
-To learn more about Next.js, take a look at the following resources:
+## 🧠 AI & Memory
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+User personalization is handled via the `user_memory` table. This allows the AI to remember user preferences and past interactions across sessions. Detailed design can be found in [bank/memory-context.md](bank/memory-context.md).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📡 Real-time Architecture
 
-## Deploy on Vercel
+- **WebSocket Server**: Located in `scripts/ws-server.js`. It handles client connections and integrates with Redis Pub/Sub for cross-instance broadcasting.
+- **Redis**: Acts as the message broker between the Next.js API and the WebSocket server.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🐳 Docker Configuration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The `docker-compose.yml` includes:
 
----
+- **App**: Next.js application with auto-migrations.
+- **WS**: Dedicated WebSocket server.
+- **DB**: PostgreSQL 16 with persistent volumes.
+- **Redis**: Redis 7 for caching and pub/sub.
+- **Adminer**: Database management tool.
 
-## Payments & Webhooks ✅
+## 📜 License
 
-This project uses Stripe Checkout for payments. To automatically grant users Premium access after a successful Checkout, we rely on a secure server-side webhook that listens for `checkout.session.completed` and sets `user.isPremium = true` in the database.
-
----
-
-## Docker & CI/CD 🐳⚙️
-
-You can run the app and its services locally with Docker Compose (Postgres + Redis + Adminer). A production Dockerfile is included for building optimized images, and there is a simple GitHub Actions workflow for CI.
-
-Quick start (local):
-
-1. Copy or create a `.env` file at the project root with the required variables (e.g., `DATABASE_URL`, `REDIS_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
-
-2. Build and start services:
-
-```bash
-docker compose up --build
-```
-
-3. The app will be available at `http://localhost:3000`, Adminer at `http://localhost:8080` (DB: `postgres` / `postgres`, DB name `playground`).
-
-Notes:
-
-- The Docker image runs `npx drizzle-kit push` on start to apply DB migrations (make sure your `DATABASE_URL` is reachable from the container).
-- The `docker-compose.yml` defines Postgres, Redis and Adminer. Adjust env vars in `.env` as needed.
-
-CI (GitHub Actions)
-
-- A basic workflow is included at `.github/workflows/ci.yml` to install deps, run lint, build, run tests and build a Docker image (but it does not push images by default).
-- To enable pushing images, add credentials and extend `docker/build-push-action` options in the workflow.
-
-Environment variables required:
-
-- `STRIPE_SECRET_KEY` — your Stripe API secret key
-- `STRIPE_WEBHOOK_SECRET` — the Stripe webhook signing secret (used to verify incoming webhook payloads)
-- `REDIS_URL` — (optional) Redis URL if you want the webhook to publish user-update messages for realtime clients
-
-How it works:
-
-1. When a logged-in user starts checkout, we attach `metadata.userId` to the Checkout Session (see `app/api/checkout/route.ts`).
-2. Stripe sends a `checkout.session.completed` event to our webhook endpoint at `POST /api/webhooks/stripe`.
-3. The webhook verifies the Stripe signature using `STRIPE_WEBHOOK_SECRET`, reads `metadata.userId`, and updates the DB (sets `isPremium` to `true`).
-4. Optionally the webhook publishes a message to Redis on channel `user-updates` to inform connected services (like the WS server) that the user plan changed.
-
-Testing locally with Stripe CLI:
-
-1. Install and login to the Stripe CLI: `npm i -g stripe && stripe login`.
-2. Start a listener forwarding events to your local app and print the webhook secret (if you haven't set it in env already):
-
-```bash
-stripe listen --forward-to localhost:3000/api/webhooks/stripe --print-secret
-```
-
-3. Trigger a `checkout.session.completed` event (replace `USER_ID` with a real user id from your DB):
-
-```bash
-stripe trigger checkout.session.completed --add "data.object.metadata.userId=USER_ID"
-```
-
-4. Confirm in your DB that the `user.isPremium` flag is set to `true` and watch the server logs for webhook handling.
-
-Notes:
-
-- Do not rely on client redirects alone to grant premium access — the webhook is the single source of truth.
-- Set `STRIPE_WEBHOOK_SECRET` in your deployment environment (Vercel/Heroku/etc.) and make sure your site is reachable by Stripe.
-
----
-
-## Memory / Context (short note) 🧭
-
-Current state:
-
-- **Persistent user memory is implemented** (table: `user_memory`) — full design, examples, and operational guidance are in `bank/memory-context.md`.
-- Usage counters and cooldowns for per-user rate limits are stored in Redis (short-lived keys).
-
-Migration & quick start:
-
-- Apply the DB migration: `npx drizzle-kit push` (or run your usual migration workflow). The migration file is `drizzle/0001_add_user_memory.sql`.
-- Test memory API locally using an authenticated session (e.g., via browser + fetch / Postman): `GET|POST /api/user/[userId]/memory`.
-
-Notes:
-
-- On premium activation (webhook), the system publishes a `user-updates` message (Redis) so subscribers can invalidate cached memory or refresh UI.
-- If you'd like, I can add an admin cleanup endpoint, a scheduled cleanup (cron) to purge old memory, or integration tests for the memory API.
+This project is private and for playground purposes.

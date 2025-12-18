@@ -100,6 +100,22 @@ Available functions:
 
 ---
 
+## Operational Context (Docker)
+
+The project is fully containerized using Docker Compose.
+
+- **Database Readiness**: The `db` service (Postgres 16) includes a healthcheck using `pg_isready`. The `app` service depends on this healthcheck (`service_healthy`) to ensure migrations run only when the database is ready to accept connections.
+- **Redis Readiness**: Similarly, the `redis` service includes a healthcheck (`redis-cli ping`), and both `app` and `ws` services wait for it.
+- **Migrations**: Migrations are handled via `npx drizzle-kit push` inside the container's entrypoint. This ensures the schema is always up-to-date with the code version running in the container.
+- **Service Ports**:
+  - App: 3000
+  - WebSocket: 8080
+  - Postgres: 2345 (Internal 5432)
+  - Redis: 6379
+  - Adminer: 1707 (Internal 8080)
+
+---
+
 ## Operational notes
 
 - Migration: SQL migration file `drizzle/0001_add_user_memory.sql` adds the table and index. Run `npx drizzle-kit push` or your migration workflow.
