@@ -38,8 +38,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner_lc }}/playground:latest
-            ghcr.io/${{ steps.vars.outputs.owner_lc }}/playground:${{ github.sha }}
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/anochat:latest
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/anochat:${{ github.sha }}
 
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.0.3
