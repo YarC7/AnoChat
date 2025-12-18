@@ -22,16 +22,14 @@ COPY package.json package-lock.json* ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.mjs ./next.config.mjs || true
-COPY --from=builder /app/next.config.ts ./next.config.ts || true
-COPY --from=builder /app/README.md ./README.md
+COPY --from=builder /app/next.config.ts ./next.config.ts
 
 # Copy any server-side libs or scripts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/app ./app
 COPY --from=builder /app/db ./db
-COPY --from=builder /app/drizzle ./drizzle
+COPY --from=builder /app/drizzle.config.ts ./
 
 EXPOSE 3000
 

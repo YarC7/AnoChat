@@ -1,10 +1,14 @@
-import { Kafka, logLevel } from "kafkajs";
+import { Kafka, logLevel, Partitioners } from "kafkajs";
 
 const brokers = (process.env.KAFKA_BROKERS || "localhost:9092").split(",");
 const clientId = process.env.KAFKA_CLIENT_ID || "playground-app";
 
 const kafka = new Kafka({ clientId, brokers, logLevel: logLevel.INFO });
-export const producer = kafka.producer();
+// Use the legacy partitioner to retain previous partitioning behavior and silence the migration warning.
+// See: https://kafka.js.org/docs/migration-guide-v2.0.0#producer-new-default-partitioner
+export const producer = kafka.producer({
+  createPartitioner: Partitioners.LegacyPartitioner,
+});
 export const consumer = kafka.consumer({ groupId: `${clientId}-group` });
 
 export async function connectProducer() {

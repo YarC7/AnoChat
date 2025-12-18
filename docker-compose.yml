@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   app:
     build: .
-    image: playground-app:latest
+    image: playground-app:local
     ports:
       - "3000:3000"
     env_file: .env
@@ -11,24 +9,55 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/playground
       - REDIS_URL=redis://redis:6379
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    pull_policy: never
+
+  ws:
+    build: .
+    image: playground-app:local
+    entrypoint: ["npm", "run", "start:ws"]
+    env_file: .env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - WS_PORT=8080
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    pull_policy: never
 
   db:
-    image: postgres:15
+    image: postgres:16-alpine
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: playground
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d playground"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "2345:5432"
 
   redis:
-    image: redis:7
+    image: redis:7-alpine
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
     ports:
       - "6379:6379"
 
@@ -36,7 +65,7 @@ services:
     image: adminer:latest
     restart: always
     ports:
-      - "8080:8080"
+      - "1707:8080"
 
 volumes:
   db-data:

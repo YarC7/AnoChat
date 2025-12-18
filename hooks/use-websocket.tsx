@@ -22,7 +22,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   const {
     url = typeof window !== "undefined"
       ? `ws://${window.location.hostname}:8080`
-      : "ws://localhost:8080",
+      : "ws://localhost:8081",
     reconnect = true,
     reconnectInterval = 3000,
   } = options;
