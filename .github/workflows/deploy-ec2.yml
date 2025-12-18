@@ -46,6 +46,7 @@ jobs:
         env:
           APP_DIR: ${{ secrets.EC2_APP_DIR }}
           IMAGE_TAG: ${{ github.sha }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
