@@ -59,8 +59,9 @@ jobs:
 
             echo "Deploying image tag: $IMAGE_TAG"
 
-            # update runtime tag (rollback friendly)
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$IMAGE_TAG/" .env
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u yarc7 --password-stdin
+
+            sed -i "s|^APP_IMAGE=.*|APP_IMAGE=ghcr.io/yarc7/anochat:${IMAGE_TAG}|" .env
 
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
