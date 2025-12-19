@@ -44,8 +44,7 @@ jobs:
           target: runner
           push: true
           tags: |
-            ghcr.io/${{ steps.vars.outputs.owner_lc }}/anochat:latest-app
-            ghcr.io/${{ steps.vars.outputs.owner_lc }}/anochat:${{ github.sha }}-app
+            ghcr.io/${{ steps.vars.outputs.owner_lc }}/anochat:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
