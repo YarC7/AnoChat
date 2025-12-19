@@ -118,26 +118,31 @@ export function MatchingLobby({ userId }: { userId: string }) {
     if (payload?.userId === userId) {
       console.log("[WS] Match is for THIS user! Redirecting to chat room...");
 
-      const newSessionId = payload.sessionId || null;
-      const newPartnerId = payload.partnerId || null;
+      // Use queueMicrotask to defer state updates and prevent cascading renders
+      // This is the React-recommended way to update state based on external events
+      queueMicrotask(() => {
+        const newSessionId = payload.sessionId || null;
+        const newPartnerId = payload.partnerId || null;
 
-      // Immediate state update (not using queueMicrotask to ensure synchronous execution)
-      setSessionId(newSessionId);
-      setPartnerId(newPartnerId);
-      setMatchFound(true);
-      setIsSearching(false);
+        console.log("[WS] Applying state updates for session:", newSessionId);
 
-      // Save to localStorage for persistence
-      if (newSessionId && newPartnerId) {
-        localStorage.setItem(
-          `activeSession_${userId}`,
-          JSON.stringify({
-            sessionId: newSessionId,
-            partnerId: newPartnerId,
-          })
-        );
-        console.log("[WS] Saved session to localStorage:", newSessionId);
-      }
+        setSessionId(newSessionId);
+        setPartnerId(newPartnerId);
+        setMatchFound(true);
+        setIsSearching(false);
+
+        // Save to localStorage for persistence
+        if (newSessionId && newPartnerId) {
+          localStorage.setItem(
+            `activeSession_${userId}`,
+            JSON.stringify({
+              sessionId: newSessionId,
+              partnerId: newPartnerId,
+            })
+          );
+          console.log("[WS] Saved session to localStorage:", newSessionId);
+        }
+      });
     } else {
       console.log("[WS] Match notification is for different user, ignoring");
     }
@@ -323,14 +328,14 @@ export function MatchingLobby({ userId }: { userId: string }) {
                   </h3>
                   <span
                     className={`text-sm font-medium px-3 py-1 rounded-full ${isConnected
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-red-500/20 text-red-400"
+                      ? "bg-green-500/20 text-green-400"
+                      : "bg-red-500/20 text-red-400"
                       }`}
                   >
                     <span
                       className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${isConnected
-                          ? "bg-green-500 animate-pulse"
-                          : "bg-red-500"
+                        ? "bg-green-500 animate-pulse"
+                        : "bg-red-500"
                         }`}
                     />
                     {isConnected ? "Connected" : "Disconnected"}
@@ -453,8 +458,8 @@ export function MatchingLobby({ userId }: { userId: string }) {
               <div className="mt-4 flex items-center justify-center gap-3">
                 <label
                   className={`px-3 py-2 rounded-full cursor-pointer ${preference === "any"
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/5 text-gray-300"
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300"
                     }`}
                   onClick={() => handlePreferenceChange("any")}
                 >
@@ -462,8 +467,8 @@ export function MatchingLobby({ userId }: { userId: string }) {
                 </label>
                 <label
                   className={`px-3 py-2 rounded-full cursor-pointer ${preference === "female"
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/5 text-gray-300"
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300"
                     }`}
                   onClick={() => handlePreferenceChange("female")}
                 >
@@ -471,8 +476,8 @@ export function MatchingLobby({ userId }: { userId: string }) {
                 </label>
                 <label
                   className={`px-3 py-2 rounded-full cursor-pointer ${preference === "male"
-                      ? "bg-purple-600 text-white"
-                      : "bg-white/5 text-gray-300"
+                    ? "bg-purple-600 text-white"
+                    : "bg-white/5 text-gray-300"
                     }`}
                   onClick={() => handlePreferenceChange("male")}
                 >
