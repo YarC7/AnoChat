@@ -1,10 +1,10 @@
-# Playground Project 🚀
+# AnoChat Project 🚀
 
-A modern, full-stack web application built with Next.js 15, featuring real-time communication, AI-driven personalization, and secure payments.
+A modern, full-stack web application built with Next.js 16 (v16.0.8), featuring real-time communication, AI-driven personalization, and secure payments.
 
 ## 🛠 Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js 16 (v16.0.8)](https://nextjs.org/) (App Router)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
@@ -81,6 +81,20 @@ npm install
 npm run dev
 ```
 
+### Quick commands & Ports
+
+- **App (dev)**: `npm run dev` — http://localhost:3000
+- **WebSocket server**: `npm run start:ws` — `ws://localhost:8080`
+- **Full stack (Docker)**: `docker compose up --build`
+
+**Common ports**
+
+- `3000` — App
+- `8080` — WebSocket server
+- `2345` → `5432` — Postgres (host → container)
+- `6379` — Redis
+- `1707` — Adminer
+
 ## 💳 Payments & Webhooks
 
 The project uses Stripe Checkout. Webhooks are handled at `/api/webhooks/stripe`.
@@ -94,6 +108,12 @@ The project uses Stripe Checkout. Webhooks are handled at `/api/webhooks/stripe`
 ## 🧠 AI & Memory
 
 User personalization is handled via the `user_memory` table. This allows the AI to remember user preferences and past interactions across sessions. Detailed design can be found in [bank/memory-context.md](bank/memory-context.md).
+
+## 🔧 Config & SEO
+
+- Site metadata and the web app manifest live in `app/manifest.ts` and `app/layout.tsx`. Update page-level metadata or the layout's `metadata` export to set titles, descriptions, and Open Graph tags.
+- The repo provides `app/robots/route.ts` and `app/sitemap/route.ts` for search indexing—update these as needed and set `NEXT_PUBLIC_SITE_URL` in your environment.
+- For best results: use canonical URLs, structured data (JSON-LD), server-side meta tags for core pages, and ensure compression and cache headers are configured for static assets.
 
 ## 📡 Real-time Architecture
 
@@ -126,12 +146,12 @@ Workflow: [.github/workflows/deploy-ec2.yml](.github/workflows/deploy-ec2.yml)
 
 Configure these repository secrets:
 
-- `EC2_HOST` 1.2.3.4 or your instance DNS
-- `EC2_USER`  e.g. `ubuntu`
-- `EC2_SSH_KEY`  private key (PEM contents) that can SSH into the instance
-- `EC2_PORT`  usually `22`
-- `EC2_APP_DIR`  e.g. `/opt/playground`
-- `GHCR_TOKEN`  a GitHub Personal Access Token with `write:packages` (and `read:packages`), used to push/pull the image
+- `EC2_HOST` — EC2 public IP or DNS (e.g., `1.2.3.4`)
+- `EC2_USER` — SSH user (e.g., `ubuntu`)
+- `EC2_SSH_KEY` — private key (PEM contents) for SSH access
+- `EC2_PORT` — SSH port (default: `22`)
+- `EC2_APP_DIR` — application directory on the instance (e.g., `/opt/playground`)
+- `GHCR_TOKEN` — GitHub token with `write:packages` and `read:packages` (used for pushing/pulling images)
 
 ### 2) EC2 one-time setup
 
@@ -159,3 +179,11 @@ And any runtime variables your app needs (Stripe keys, auth secrets, etc.).
 - The workflow uploads [docker-compose.prod.yml](docker-compose.prod.yml) to the server and runs:
   - `docker compose pull`
   - `docker compose up -d`
+
+### AWS Notes: Load Balancer, Security Groups & Scaling
+
+- For production, front EC2 instance(s) with an Application Load Balancer (ALB) to handle TLS termination (use AWS Certificate Manager) and route traffic to your app.
+- ALB security group: allow inbound `80/443` from `0.0.0.0/0`.
+- EC2 security group: allow inbound from the ALB security group on your app port (e.g., `3000`) and SSH (`22`) only from trusted admin IP(s).
+- Use ALB health checks (e.g., `/` or a `/health` endpoint) to verify instance readiness and enable replacement/autoscaling.
+- Consider hosting images in GHCR or ECR and restrict access using IAM roles and GitHub Secrets; rotate secrets regularly and grant least privilege.
