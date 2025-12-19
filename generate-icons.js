@@ -44,20 +44,8 @@ async function main() {
 
   // Generate favicon.ico from a couple of PNGs if png-to-ico is available
   let pngToIco = null;
-  try {
-    const mod = await import("png-to-ico");
-    pngToIco = (mod && (mod.default || mod)) ?? null;
-  } catch (e) {
-    try {
-      // CommonJS fallback (in case of mixed module environments)
-
-      const mod = require("png-to-ico");
-      pngToIco = mod || null;
-    } catch (err) {
-      pngToIco = null;
-    }
-  }
-
+  const mod = await import("png-to-ico");
+  pngToIco = (mod && (mod.default || mod)) ?? null;
   let generatedFavicon = false;
 
   if (pngToIco) {
