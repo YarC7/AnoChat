@@ -90,12 +90,15 @@ export function MatchingLobby({ userId }: { userId: string }) {
   useEffect(() => {
     if (!lastMessage) return;
 
+    console.log("[WS] Received message:", lastMessage.type, lastMessage);
+
     // Handle session ended by partner
     if (
       lastMessage.type === "session_ended" &&
       lastMessage.sessionId === sessionId
     ) {
       // Partner left the room
+      console.log("[WS] Session ended by partner");
       localStorage.removeItem(`activeSession_${userId}`);
       alert("Your chat partner has left the conversation.");
       window.location.reload();
@@ -108,32 +111,37 @@ export function MatchingLobby({ userId }: { userId: string }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = (lastMessage as any).payload ?? lastMessage;
 
-    console.debug("MatchingLobby received match_found payload:", payload);
+    console.log("[WS] Match found payload:", payload);
+    console.log("[WS] Current userId:", userId);
+    console.log("[WS] Payload userId:", payload?.userId);
 
     if (payload?.userId === userId) {
-      // Use queueMicrotask to defer state updates and avoid cascading renders
-      queueMicrotask(() => {
-        const newSessionId = payload.sessionId || null;
-        const newPartnerId = payload.partnerId || null;
+      console.log("[WS] Match is for THIS user! Redirecting to chat room...");
 
-        setSessionId(newSessionId);
-        setPartnerId(newPartnerId);
-        setMatchFound(true);
-        setIsSearching(false);
+      const newSessionId = payload.sessionId || null;
+      const newPartnerId = payload.partnerId || null;
 
-        // Save to localStorage for persistence
-        if (newSessionId && newPartnerId) {
-          localStorage.setItem(
-            `activeSession_${userId}`,
-            JSON.stringify({
-              sessionId: newSessionId,
-              partnerId: newPartnerId,
-            })
-          );
-        }
-      });
+      // Immediate state update (not using queueMicrotask to ensure synchronous execution)
+      setSessionId(newSessionId);
+      setPartnerId(newPartnerId);
+      setMatchFound(true);
+      setIsSearching(false);
+
+      // Save to localStorage for persistence
+      if (newSessionId && newPartnerId) {
+        localStorage.setItem(
+          `activeSession_${userId}`,
+          JSON.stringify({
+            sessionId: newSessionId,
+            partnerId: newPartnerId,
+          })
+        );
+        console.log("[WS] Saved session to localStorage:", newSessionId);
+      }
+    } else {
+      console.log("[WS] Match notification is for different user, ignoring");
     }
-  }, [lastMessage, userId, sessionId]);
+  }, [lastMessage, userId]);
 
   // Poll queue stats while searching
   useEffect(() => {
@@ -314,18 +322,16 @@ export function MatchingLobby({ userId }: { userId: string }) {
                     Waiting Room
                   </h3>
                   <span
-                    className={`text-sm font-medium px-3 py-1 rounded-full ${
-                      isConnected
+                    className={`text-sm font-medium px-3 py-1 rounded-full ${isConnected
                         ? "bg-green-500/20 text-green-400"
                         : "bg-red-500/20 text-red-400"
-                    }`}
+                      }`}
                   >
                     <span
-                      className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${
-                        isConnected
+                      className={`inline-block w-1.5 h-1.5 rounded-full mr-2 ${isConnected
                           ? "bg-green-500 animate-pulse"
                           : "bg-red-500"
-                      }`}
+                        }`}
                     />
                     {isConnected ? "Connected" : "Disconnected"}
                   </span>
@@ -446,31 +452,28 @@ export function MatchingLobby({ userId }: { userId: string }) {
               {/* Preference selector */}
               <div className="mt-4 flex items-center justify-center gap-3">
                 <label
-                  className={`px-3 py-2 rounded-full cursor-pointer ${
-                    preference === "any"
+                  className={`px-3 py-2 rounded-full cursor-pointer ${preference === "any"
                       ? "bg-purple-600 text-white"
                       : "bg-white/5 text-gray-300"
-                  }`}
+                    }`}
                   onClick={() => handlePreferenceChange("any")}
                 >
                   Any
                 </label>
                 <label
-                  className={`px-3 py-2 rounded-full cursor-pointer ${
-                    preference === "female"
+                  className={`px-3 py-2 rounded-full cursor-pointer ${preference === "female"
                       ? "bg-purple-600 text-white"
                       : "bg-white/5 text-gray-300"
-                  }`}
+                    }`}
                   onClick={() => handlePreferenceChange("female")}
                 >
                   Female
                 </label>
                 <label
-                  className={`px-3 py-2 rounded-full cursor-pointer ${
-                    preference === "male"
+                  className={`px-3 py-2 rounded-full cursor-pointer ${preference === "male"
                       ? "bg-purple-600 text-white"
                       : "bg-white/5 text-gray-300"
-                  }`}
+                    }`}
                   onClick={() => handlePreferenceChange("male")}
                 >
                   Male

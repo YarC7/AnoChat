@@ -178,34 +178,41 @@ export async function joinMatchingQueue(
           // Cleanup preferences from hash
           await redis.hdel(PREF_HASH, userId, partnerId);
 
-          // Publish match notification to BOTH users (for symmetry)
+          // Publish match notification to BOTH users in parallel (for symmetry)
           console.log(
-            `[NOTIFY] Publishing match to partner (${partnerId}): sessionId=${sessionId}, partnerId=${userId}`
-          );
-          await redis.publish(
-            "broadcast",
-            JSON.stringify({
-              type: "match_found",
-              userId: partnerId,
-              sessionId,
-              partnerId: userId,
-              timestamp: Date.now(),
-            })
+            `[NOTIFY] Publishing match notifications to both users: ${userId} and ${partnerId}`
           );
 
+          await Promise.all([
+            redis.publish(
+              "broadcast",
+              JSON.stringify({
+                type: "match_found",
+                userId: partnerId,
+                sessionId,
+                partnerId: userId,
+                timestamp: Date.now(),
+              })
+            ),
+            redis.publish(
+              "broadcast",
+              JSON.stringify({
+                type: "match_found",
+                userId: userId,
+                sessionId,
+                partnerId: partnerId,
+                timestamp: Date.now(),
+              })
+            ),
+          ]);
+
           console.log(
-            `[NOTIFY] Publishing match to current user (${userId}): sessionId=${sessionId}, partnerId=${partnerId}`
+            `[NOTIFY] Match notifications published successfully for session ${sessionId}`
           );
-          await redis.publish(
-            "broadcast",
-            JSON.stringify({
-              type: "match_found",
-              userId: userId,
-              sessionId,
-              partnerId: partnerId,
-              timestamp: Date.now(),
-            })
-          );
+
+          // Small delay to ensure Redis pub/sub propagates to all WS server instances
+          // This prevents race condition where HTTP response beats WebSocket notification
+          await new Promise((resolve) => setTimeout(resolve, 100));
 
           return { matched: true, sessionId, partnerId };
         }
@@ -259,27 +266,40 @@ export async function joinMatchingQueue(
           // Cleanup preferences from hash
           await redis.hdel(PREF_HASH, userId, partnerId);
 
-          // Publish match notification to BOTH users
-          await redis.publish(
-            "broadcast",
-            JSON.stringify({
-              type: "match_found",
-              userId: partnerId,
-              sessionId,
-              partnerId: userId,
-              timestamp: Date.now(),
-            })
+          // Publish match notification to BOTH users in parallel
+          console.log(
+            `[NOTIFY] Publishing match notifications (gender fallback) to both users: ${userId} and ${partnerId}`
           );
-          await redis.publish(
-            "broadcast",
-            JSON.stringify({
-              type: "match_found",
-              userId: userId,
-              sessionId,
-              partnerId: partnerId,
-              timestamp: Date.now(),
-            })
+
+          await Promise.all([
+            redis.publish(
+              "broadcast",
+              JSON.stringify({
+                type: "match_found",
+                userId: partnerId,
+                sessionId,
+                partnerId: userId,
+                timestamp: Date.now(),
+              })
+            ),
+            redis.publish(
+              "broadcast",
+              JSON.stringify({
+                type: "match_found",
+                userId: userId,
+                sessionId,
+                partnerId: partnerId,
+                timestamp: Date.now(),
+              })
+            ),
+          ]);
+
+          console.log(
+            `[NOTIFY] Match notifications published successfully for session ${sessionId}`
           );
+
+          // Small delay to ensure Redis pub/sub propagates to all WS server instances
+          await new Promise((resolve) => setTimeout(resolve, 100));
 
           return { matched: true, sessionId, partnerId };
         }
