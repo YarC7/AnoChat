@@ -26,7 +26,9 @@ COPY --from=builder /app/drizzle.config.ts ./
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/scripts ./scripts
 
-COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules/drizzle-kit ./node_modules/drizzle-kit
+COPY --from=prod-deps /app/node_modules/dotenv ./node_modules/dotenv
+COPY --from=prod-deps /app/node_modules/typescript ./node_modules/typescript
 
 EXPOSE 3000 8080
 CMD ["node", "server.js"]
